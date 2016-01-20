@@ -23,7 +23,8 @@ $('body').mousedown(function (event) {
 // Function to update the list whenever input is detected
 UpdateList = function () {
     userinput = $('#menuinput').val();
-    $('#menu').append(userinput);
+    items = NodeSelect(userinput);
+    $('#menu').append(items.length);
 }
 
 // Menu custom element

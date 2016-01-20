@@ -19,4 +19,24 @@ var functions = [
 ];
 
 // Function to return only relevant nodes
-function 
+function NodeSelect(userinput, functionlist) {
+    returnlist = [];
+    for(i=0; i < functionlist.length; i++) {
+        var hit = false;
+        for(var prop in functionlist[i]) {
+            if(prop.indexOf(userinput) > -1) {
+                hit = true;
+            }
+            if(hit) {
+                break;
+            }
+        }
+        if(hit) {
+            returnlist.append(functionlist[i]);
+        } 
+    }
+    if(returnlist.length == 0) {
+        returnlist = functionlist;
+    }
+    return(returnlist);
+} 

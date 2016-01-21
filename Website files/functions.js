@@ -20,19 +20,21 @@ var functions = [
 
 // Function to return only relevant nodes
 function NodeSelect(userinput, functionlist) {
-    returnlist = [];
-    for(i=0; i < functionlist.length; i++) {
+    var returnlist = [];
+    for (var i = 0; i < functionlist.length; i++) {
         var hit = false;
-        for(var prop in functionlist[i]) {
-            if(prop.indexOf(userinput) > -1) {
-                hit = true;
+        for (var prop in functionlist[i]) {
+            if(prop != "id") {
+                if(functionlist[i][prop].toLowerCase().indexOf(userinput.toLowerCase()) > -1) {
+                    hit = true;
+                }
             }
             if(hit) {
                 break;
             }
         }
         if(hit) {
-            returnlist.append(functionlist[i]);
+            returnlist.push(functionlist[i]);
         } 
     }
     if(returnlist.length == 0) {

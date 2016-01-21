@@ -24,7 +24,7 @@ $('body').mousedown(function (event) {
 UpdateList = function () {
     userinput = $('#menuinput').val();
     items = NodeSelect(userinput);
-    $('#menubuttonsdiv').empty();
+    #$('#menubuttonsdiv').empty();
     $('#menubuttonsdiv').append(items.length);
 }
 

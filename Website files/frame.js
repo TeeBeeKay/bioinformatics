@@ -24,7 +24,8 @@ $('body').mousedown(function (event) {
 UpdateList = function () {
     userinput = $('#menuinput').val();
     items = NodeSelect(userinput);
-    $('#menu').append(items.length);
+    $('#menubuttonsdiv').empty();
+    $('#menubuttonsdiv').append(items.length);
 }
 
 // Menu custom element
@@ -32,6 +33,7 @@ var MenuElementProto = Object.create(HTMLDivElement.prototype);
 MenuElementProto.attachedCallback = function () {
     $(this).append("<b>Insert</b>");
     $(this).append("<input type=\"text\" oninput=\"UpdateList()\" id=\"menuinput\">");
+    $(this).append("<div id=\"menubuttonsdiv\"></div>")
     this.style.overflow="hidden";
     UpdateList();
 };

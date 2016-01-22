@@ -3,23 +3,24 @@
 // Enable kinetic drag to scroll
 $('body').kinetic({
     filterTarget: function (target, e) {
-        return !($(target).hasClass("node")|$(target).hasID("menu"));
+        return !($(target).hasClass("menu")||$(target).hasClass("node"));
     }
 });
 
 // Import list of nodes
-$.getScript("functions.js")
+$.getScript("functions.js");
 
 // Set unique node id
-var uid = 0
+var uid = 0;
+var mousex, mousey = 0
 
 // On right click, open menu
 $('body').mousedown(function (event) {
     if (event.which === 3) {
         $('#menu').remove();
-        var mousex = event.pageX;
-        var mousey = event.pageY;
-        $("body").append("<div is=\"x-menu\" id=\"menu\" style=\"left:" + mousex + "px;top:" + mousey + "px;\"></div>");
+        mousex = event.pageX;
+        mousey = event.pageY;
+        $("body").append("<div is=\"x-menu\" id=\"menu\" class=\"menu\" style=\"left:" + mousex + "px;top:" + mousey + "px;\"></div>");
     }
 });
 
@@ -36,7 +37,9 @@ UpdateList = function () {
 // On menu item click, create draggable node. Node id is given as argument
 function createNode (id) {
     node = lookup[id];
-    $('body').append("<div class=\"node\" id=\"node" + toString(uid) + "\">" + node.name + "</div>");
+    $('#menu').remove();
+    $('body').append("<div class=\"node\" id=\"node" + uid + "\" style=\"left:" + mousex + "px;top:" + mousey + "px;\">" + node.name + "</div>");
+    $('.node').draggable();
 }
 
 // Menu custom element

@@ -8,9 +8,11 @@
 }
 
 .node {
-    height: 50px;
-    width: 50px;
-    background-color: azure;
+    position: absolute;
+    height: 100px;
+    width: 100px;
+    background-color: grey;
+    border-radius: 25px;
 }
 
 #menu {

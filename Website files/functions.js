@@ -14,7 +14,8 @@ var functions = [
     new Node(1, "Blast", "protein DNA", "Search a database for similar protein or DNA sequences with BLAST", "search blast database"),
     new Node(2, "Protein digest", "protein", "Digest a protein sequence into peptides using common enzymes", "protein digest peptides"),
     new Node(3, "DNA digest", "DNA", "Digest a DNA sequence using restriction enzymes", "DNA digest restriction enzymes EcoR1 BamH1"),
-    new Node(4, "Protein mass", "protein", "Evaluate the expected mass of a protein sequence", "mass kDa molecular weight")
+    new Node(4, "Protein mass", "protein", "Evaluate the expected mass of a protein sequence", "mass kDa molecular weight"),
+    new Node(5, "Transcribe/translate", "DNA", "Transcribe and/or translate a DNA or mRNA sequence")
 
 ];
 

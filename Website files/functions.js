@@ -18,6 +18,12 @@ var functions = [
 
 ];
 
+// Create lookup table for functions from id
+var lookup = {}
+for (var i = 0, len = functions.length; i < len; i++) {
+    lookup[functions[i].id] = functions[i]
+}
+
 // Function to return only relevant nodes
 function NodeSelect(userinput, functionlist) {
     var returnlist = [];

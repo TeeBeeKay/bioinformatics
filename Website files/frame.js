@@ -3,12 +3,15 @@
 // Enable kinetic drag to scroll
 $('body').kinetic({
     filterTarget: function (target, e) {
-        return !($(target).hasClass("node"));
+        return !($(target).hasClass("node")|$(target).hasID("menu"));
     }
 });
 
 // Import list of nodes
 $.getScript("functions.js")
+
+// Set unique node id
+var uid = 0
 
 // On right click, open menu
 $('body').mousedown(function (event) {
@@ -26,9 +29,14 @@ UpdateList = function () {
     items = NodeSelect(userinput, functions);
     $('#menubuttonsdiv').empty();
     for (var i = 0; i < items.length; i++) {
-        $('#menubuttonsdiv').append("<button class=\"menuitem\">" + items[i].name + "</button><br>");
+        $('#menubuttonsdiv').append("<button class=\"menuitem\" onclick=\"createNode(" + items[i].id + ")\")>" + items[i].name + "</button><br>");
     }
-    
+}
+
+// On menu item click, create draggable node. Node id is given as argument
+function createNode (id) {
+    node = lookup[id];
+    $('body').append("<div class=\"node\" id=\"node" + toString(uid) + "\">" + node.name + "</div>");
 }
 
 // Menu custom element

@@ -1,10 +1,13 @@
 #inner {
+    background-image: url(Blueprint%20background.png);
+}
+
+.bg {
     position: absolute;
     left: 0;
     top: 0;
     height: 10000px;
     width: 10000px;
-    background-image: url(Blueprint%20background.png);
 }
 
 .node {
@@ -33,4 +36,16 @@
     z-index: 2;
     border-radius: 25px;
     background-color: grey;
+}
+
+.cable {
+    z-index: 2;
+}
+
+.socket {
+    width: 10px;
+    height: 10px;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 0;
 }

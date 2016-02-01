@@ -41,7 +41,13 @@ function createWire(event, parent) {
     line.setAttributeNS(null, "stroke", "blue");
     line.setAttributeNS(null, "stroke-width", "2");
     line.setAttributeNS(null, "fill", "none");
+    line.setAttributeNS(null, "parent", parent);
     document.getElementById("svgcanvas").appendChild(line);
+    linkCable(line);
+}
+
+function moveWire(wire, start, end) {
+    wire.setAttributeNS(null, "d", constructLine(start.x, start.y, end.x, end.y))
 }
 
 // On right click, open menu
@@ -50,7 +56,7 @@ $('body').mousedown(function (event) {
         $('#menu').remove();
         mousex = event.pageX;
         mousey = event.pageY;
-        $("body").append("<div is=\"x-menu\" id=\"menu\" class=\"menu\" style=\"left:" + mousex + "px;top:" + mousey + "px;\"></div>");
+        $("body").append("<div is=\"x-menu\" id=\"menu\" class=\"menu\" style=\"left: " + mousex + "px;top: " + mousey + "px;\"></div>");
         document.getElementById("curve").setAttribute("d", constructLine(0,0,mousex,mousey));
     }
 });
@@ -71,7 +77,9 @@ function createNode (id) {
     $('#menu').remove();
     $('body').append("<div class=\"node\" id=\"node" + uid + "\" style=\"left:" + mousex + "px;top:" + mousey + "px;\">" + node.name + "<br></div>");
     $('#node'+ uid).draggable();
-    $('#node'+ uid).append("<button class=\"socket notkinetic\" parent=\"" + uid + "\" onclick=\"createWire(event, parent)\"></button>");
+    $('#node'+ uid).append("<div id=\"inputs" + uid + "\" class=\"inputs notkinetic\"></button>");
+    var parentname = "node" + uid;
+    $('#inputs'+ uid).append("<button class=\"socket input notkinetic\" parent=\"" + uid + "\" onclick=\"createWire(event, &quot;" + parentname + "&quot;)\"></button>");
     uid += 1;
 }
 
@@ -96,3 +104,21 @@ var MenuItem = document.registerElement('menu-item', {
     prototype: MenuItemProto,
     extends: 'button'
 });
+
+// Draw cable until click
+function linkCable(cable) {
+    drawcable = true;
+    while(drawcable) {
+        var cableparentname = cable.getAttributeNS(null, "parent");
+        var cableparent = document.getElementById(cableparentname);
+        var style = cableparent.getAttribute("style");
+        positions = style.split(";");
+        left = positions[0].replace(/\D/g,''); //matches all non-numeric chars
+        tops = positions[1].replace(/\D/g,'');
+        var start = {x: left, y: tops};
+        console.log(start);
+        
+        //moveWire(beingdrawn, start, end)
+        drawcable = false;
+    }
+}

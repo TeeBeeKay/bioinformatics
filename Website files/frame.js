@@ -13,6 +13,16 @@ $.getScript("functions.js");
 // Set unique node id
 var uid = 0;
 var mousex, mousey = 0;
+var cable;
+var pos
+
+function getElementPosition (element) {
+    bodypos = document.body.getBoundingClientRect();
+    elepos = element.getBoundingClientRect();
+    toppos = elepos.top - bodypos.top + 8;
+    leftpos = elepos.left - bodypos.left + 8;
+    return [leftpos, toppos];
+}
 
 // Line constructor
 function constructLine(startx, starty, endx, endy) {
@@ -35,15 +45,19 @@ function constructSocket(io, id) {
 }
 
 function createWire(event, parent) {
+    pos = getElementPosition(event.target);
+    pos[0] += 5;
+    pos[1] += 5;
     line = document.createElementNS("http://www.w3.org/2000/svg","path");
     line.setAttributeNS(null, "class", "cable");
-    line.setAttributeNS(null, "d", constructLine(event.pageX, event.pageY, 600, 600));
+    line.setAttributeNS(null, "d", constructLine(pos[0], pos[1], pos[0], pos[1]));
     line.setAttributeNS(null, "stroke", "blue");
     line.setAttributeNS(null, "stroke-width", "2");
     line.setAttributeNS(null, "fill", "none");
     line.setAttributeNS(null, "parent", parent);
     document.getElementById("svgcanvas").appendChild(line);
-    linkCable(line);
+    cable = line;
+    document.addEventListener('mousemove', linkCable);
 }
 
 function moveWire(wire, start, end) {
@@ -53,13 +67,16 @@ function moveWire(wire, start, end) {
 // On right click, open menu
 $('body').mousedown(function (event) {
     if (event.which === 3) {
-        $('#menu').remove();
         mousex = event.pageX;
         mousey = event.pageY;
-        $("body").append("<div is=\"x-menu\" id=\"menu\" class=\"menu\" style=\"left: " + mousex + "px;top: " + mousey + "px;\"></div>");
-        document.getElementById("curve").setAttribute("d", constructLine(0,0,mousex,mousey));
+        createMenu(event.pageX, event.pageY);
     }
 });
+
+function createMenu(x, y) {
+    $('#menu').remove();
+    $("body").append("<div is=\"x-menu\" id=\"menu\" class=\"menu\" style=\"left: " + x + "px;top: " + y + "px;\"></div>");
+}
 
 // Function to update the list whenever input is detected
 UpdateList = function () {
@@ -75,11 +92,16 @@ UpdateList = function () {
 function createNode (id) {
     node = lookup[id];
     $('#menu').remove();
-    $('body').append("<div class=\"node\" id=\"node" + uid + "\" style=\"left:" + mousex + "px;top:" + mousey + "px;\">" + node.name + "<br></div>");
+    $('#inner').append("<div class=\"node notkinetic\" id=\"node" + uid + "\" style=\"left:" + mousex + "px;top:" + mousey + "px;\"></div>");
     $('#node'+ uid).draggable();
-    $('#node'+ uid).append("<div id=\"inputs" + uid + "\" class=\"inputs notkinetic\"></button>");
+    $('#node'+ uid).append("<div class=\"nodename notkinetic\">" + node.name + "</div>");
+    $('#node'+ uid).append("<div id=\"inputs" + uid + "\" class=\"inputs notkinetic\"></div>");
+    $('#node'+ uid).append("<div id=\"outputs" + uid + "\" class=\"outputs notkinetic\"></div>");
     var parentname = "node" + uid;
-    $('#inputs'+ uid).append("<button class=\"socket input notkinetic\" parent=\"" + uid + "\" onclick=\"createWire(event, &quot;" + parentname + "&quot;)\"></button>");
+    for(var i = 0; i < node.initialInputs; i++) {
+        $('#inputs'+ uid).append("<button class=\"socket input notkinetic\" parent=\"" + uid + "\" onclick=\"createWire(event, &quot;" + parentname + "&quot;)\"></button> INPUT!!!!");
+    }
+    $('#outputs'+ uid).append("OUTPUT!!!!<button class=\"socket output notkinetic\" parent=\"" + uid + "\" onclick=\"createWire(event, &quot;" + parentname + "&quot;)\"></button>");
     uid += 1;
 }
 
@@ -106,19 +128,15 @@ var MenuItem = document.registerElement('menu-item', {
 });
 
 // Draw cable until click
-function linkCable(cable) {
-    drawcable = true;
-    while(drawcable) {
-        var cableparentname = cable.getAttributeNS(null, "parent");
-        var cableparent = document.getElementById(cableparentname);
-        var style = cableparent.getAttribute("style");
-        positions = style.split(";");
-        left = positions[0].replace(/\D/g,''); //matches all non-numeric chars
-        tops = positions[1].replace(/\D/g,'');
-        var start = {x: left, y: tops};
-        console.log(start);
-        
-        //moveWire(beingdrawn, start, end)
-        drawcable = false;
-    }
+function linkCable(event) {
+    cable.setAttributeNS(null, "d", constructLine(pos[0], pos[1], event.pageX, event.pageY));
+    document.addEventListener('click', connectCable);
+}
+
+function connectCable(event) {
+    document.removeEventListener('mousemove', linkCable);
+    document.removeEventListener('click', connectCable);
+    mousex = event.pageX;
+    mousey = event.pageY;
+    createMenu(event.pageX, event.pageY);
 }

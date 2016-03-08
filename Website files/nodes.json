@@ -1,0 +1,118 @@
+// http://www.objgen.com/json/models/IfA8
+
+{
+  "nodetypes": [
+    {
+      "id": 0,
+      "name": "Sequence",
+      "description": "Input a biological sequence with this node",
+      "tags": "sequence fasta file input DNA protein",
+      "inputs": [
+        {
+          "type": "sequence",
+          "initial": 1,
+          "max": -1
+        }
+      ],
+      "outputs": [
+        {
+          "type": "sequence",
+          "initial": 1,
+          "max": -1
+        }
+      ],
+      "settings": [
+        {
+          "label": "Paste sequence",
+          "type": "textbox"
+        },
+        {
+          "label": "Upload fasta file",
+          "type": "fileupload"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "Blast",
+      "description": "Search a database for similar protein or DNA sequences with BLAST",
+      "tags": "search blast database",
+      "inputs": [
+        {
+          "type": "sequence",
+          "initial": 1,
+          "max": -1
+        }
+      ],
+      "outputs": [
+        {
+          "type": "blastdata",
+          "initial": 1,
+          "max": 1
+        },
+        {
+          "type": "sequence",
+          "initial": 1,
+          "max": -1
+        }
+      ],
+      "settings": [
+        {
+          "label": "Blast program",
+          "type": "radio",
+          "options": [
+            {
+              "label": "blastn"
+            },
+            {
+              "label": "blastp"
+            },
+            {
+              "label": "blastx"
+            },
+            {
+              "label": "tblastn"
+            },
+            {
+              "label": "tblastx"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Protein digest",
+      "description": "Digest a protein sequence into peptides using common enzymes",
+      "tags": "protein digest peptides",
+      "inputs": [
+        {
+          "type": "sequence",
+          "initial": 1,
+          "max": -1
+        }
+      ],
+      "outputs": [
+        {
+          "type": "sequence",
+          "initial": 1,
+          "max": -1
+        }
+      ],
+      "settings": [
+        {
+          "label": "Enzyme",
+          "type": "radio",
+          "options": [
+            {
+              "label": "Trypsin"
+            },
+            {
+              "label": "Chymotrypsin"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

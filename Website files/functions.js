@@ -1,21 +1,25 @@
 
 // Constructor for Node struct
-function Node(id, name, datatypes, description, tags) {
+function Node(id, name, datatypes, description, tags, initialInputs, initialOutputs, maxInputs, maxOutputs, textInput) {
     this.id = id;
     this.name = name;
     this.datatypes = datatypes;
     this.description = description;
     this.tags = tags;
+    this.initialInputs = initialInputs;
+    this.initialOutput = initialOutputs;
+    this.maxInputs = maxInputs;
+    this.maxOutputs = maxOutputs;
 }
 
 // List of available Nodes
 var functions = [
-    new Node(0, "Sequence", "", "Input a biological sequence with this node", "sequence fasta file input DNA protein"),
-    new Node(1, "Blast", "protein DNA", "Search a database for similar protein or DNA sequences with BLAST", "search blast database"),
-    new Node(2, "Protein digest", "protein", "Digest a protein sequence into peptides using common enzymes", "protein digest peptides"),
-    new Node(3, "DNA digest", "DNA", "Digest a DNA sequence using restriction enzymes", "DNA digest restriction enzymes EcoR1 BamH1"),
-    new Node(4, "Protein mass", "protein", "Evaluate the expected mass of a protein sequence", "mass kDa molecular weight"),
-    new Node(5, "Transcribe/translate", "DNA", "Transcribe and/or translate a DNA or mRNA sequence")
+    new Node(0, "Sequence", "", "Input a biological sequence with this node", "sequence fasta file input DNA protein", 0, 1, 0, -1, true),
+    new Node(1, "Blast", "protein DNA", "Search a database for similar protein or DNA sequences with BLAST", "search blast database", 1, 1, -1, -1, false),
+    new Node(2, "Protein digest", "protein", "Digest a protein sequence into peptides using common enzymes", "protein digest peptides", 1, 1, -1, -1, false),
+    new Node(3, "DNA digest", "DNA", "Digest a DNA sequence using restriction enzymes", "DNA digest restriction enzymes EcoR1 BamH1", 1, 1, -1, -1, false),
+    new Node(4, "Protein mass", "protein", "Evaluate the expected mass of a protein sequence", "mass kDa molecular weight", 1, 1, -1, -1, false),
+    new Node(5, "Transcribe/translate", "DNA", "Transcribe and/or translate a DNA or mRNA sequence", 1, 1, -1, -1, false)
 
 ];
 

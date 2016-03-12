@@ -14,7 +14,8 @@ $.getScript("functions.js");
 var uid = 0;
 var mousex, mousey = 0;
 var cable;
-var pos
+var pos;
+var selected;
 
 function getElementPosition (element) {
     bodypos = document.body.getBoundingClientRect();
@@ -45,11 +46,12 @@ function constructSocket(io, id) {
 }
 
 function createWire(event, parent) {
+    selected = parent;
     pos = getElementPosition(event.target);
     pos[0] += 5;
     pos[1] += 5;
     line = document.createElementNS("http://www.w3.org/2000/svg","path");
-    line.setAttributeNS(null, "class", "cable");
+    line.setAttributeNS(null, "class", "cable drawing");
     line.setAttributeNS(null, "d", constructLine(pos[0], pos[1], pos[0], pos[1]));
     line.setAttributeNS(null, "stroke", "blue");
     line.setAttributeNS(null, "stroke-width", "2");
@@ -73,9 +75,9 @@ $('body').mousedown(function (event) {
     }
 });
 
-function createMenu(x, y) {
+function createMenu(x, y, input) {
     $('#menu').remove();
-    $("body").append("<div is=\"x-menu\" id=\"menu\" class=\"menu\" style=\"left: " + x + "px;top: " + y + "px;\"></div>");
+    $("body").append("<div is=\"x-menu\" id=\"menu\" class=\"menu\" input=\"" + input + "\" style=\"left: " + x + "px;top: " + y + "px;\"></div>");
 }
 
 // Function to update the list whenever input is detected
@@ -91,6 +93,7 @@ UpdateList = function () {
 // On menu item click, create draggable node. Node id is given as argument
 function createNode (id) {
     node = lookup[id];
+    var link = document.getElementById('menu').getAttribute('input');
     $('#menu').remove();
     $('#inner').append("<div class=\"node notkinetic\" id=\"node" + uid + "\" style=\"left:" + mousex + "px;top:" + mousey + "px;\"></div>");
     $('#node'+ uid).draggable();
@@ -99,10 +102,37 @@ function createNode (id) {
     $('#node'+ uid).append("<div id=\"outputs" + uid + "\" class=\"outputs notkinetic\"></div>");
     var parentname = "node" + uid;
     for(var i = 0; i < node.initialInputs; i++) {
-        $('#inputs'+ uid).append("<button class=\"socket input notkinetic\" parent=\"" + uid + "\" onclick=\"createWire(event, &quot;" + parentname + "&quot;)\"></button> INPUT!!!!");
+        $('#inputs'+ uid).append("<button class=\"socket input notkinetic\" parent=\"" + uid + "\" ident=\"" + i + "\" onclick=\"createWire(event, &quot;" + parentname + ' ' + i + "&quot;)\"></button> INPUT!!!!");
     }
-    $('#outputs'+ uid).append("OUTPUT!!!!<button class=\"socket output notkinetic\" parent=\"" + uid + "\" onclick=\"createWire(event, &quot;" + parentname + "&quot;)\"></button>");
+    $('#outputs'+ uid).append("OUTPUT!!!!<button class=\"socket output notkinetic\" parent=\"" + uid + "\" ident=\"" + 0 + "\" onclick=\"createWire(event, &quot;" + parentname + ' ' + 0 + "&quot;)\"></button>");
     uid += 1;
+    if(document.getElementsByClassName('drawing')[0]){
+        document.getElementById('svgcanvas').removeChild(document.getElementsByClassName('drawing')[0]);
+    }
+    if(link != 'undefined') {
+        var linkparent = link.split(' ')[0];
+        var output = link.split(' ')[1];
+        linkNodes(linkparent, output, "node" + (uid - 1), 0);
+    }
+}
+
+function linkNodes (parent, output, child, input) {
+    parentnode = document.getElementById(parent);
+    childnode = document.getElementById(child);
+    parentnode.querySelector('.outputs').querySelector('[ident=\"' + output + '\"]').setAttribute('link', child + ' ' + input);
+    parentout = parentnode.querySelector('.outputs').querySelector('[ident=\"' + output + '\"]');
+    parentoutpos = getElementPosition(parentout);
+    childnode.querySelector('.inputs').querySelector('[ident=\"' + input + '\"]').setAttribute('link', parent + ' ' + output);
+    childout = childnode.querySelector('.inputs').querySelector('[ident=\"' + input + '\"]');
+    childoutpos = getElementPosition(childout);
+    line = document.createElementNS("http://www.w3.org/2000/svg","path");
+    line.setAttributeNS(null, "class", "cable");
+    line.setAttributeNS(null, "d", constructLine(parentoutpos[0], parentoutpos[1], childoutpos[0], childoutpos[1]));
+    line.setAttributeNS(null, "stroke", "blue");
+    line.setAttributeNS(null, "stroke-width", "2");
+    line.setAttributeNS(null, "fill", "none");
+    line.setAttributeNS(null, "parent", parent);
+    document.getElementById("svgcanvas").appendChild(line);
 }
 
 // Menu custom element
@@ -138,5 +168,5 @@ function connectCable(event) {
     document.removeEventListener('click', connectCable);
     mousex = event.pageX;
     mousey = event.pageY;
-    createMenu(event.pageX, event.pageY);
+    createMenu(event.pageX, event.pageY, selected);
 }

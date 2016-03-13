@@ -96,7 +96,12 @@ function createNode (id) {
     var link = document.getElementById('menu').getAttribute('input');
     $('#menu').remove();
     $('#inner').append("<div class=\"node notkinetic\" id=\"node" + uid + "\" style=\"left:" + mousex + "px;top:" + mousey + "px;\"></div>");
-    $('#node'+ uid).draggable();
+    $('#node'+ uid).draggable({
+        drag: function(event, ui) {
+            node = ui.helper[0];
+            //find connected nodes
+        }
+    });
     $('#node'+ uid).append("<div class=\"nodename notkinetic\">" + node.name + "</div>");
     $('#node'+ uid).append("<div id=\"inputs" + uid + "\" class=\"inputs notkinetic\"></div>");
     $('#node'+ uid).append("<div id=\"outputs" + uid + "\" class=\"outputs notkinetic\"></div>");

@@ -11,11 +11,26 @@ $('body').kinetic({
 $.getScript("functions.js");
 
 // Set unique node id
-var uid = 0;
-var mousex, mousey = 0;
-var cable;
-var pos;
-var selected;
+var global = new Object();
+global.uid = 0;
+global.mousex = 0;
+global.mousey = 0;
+global.cable;
+global.pos;
+global.selected;
+
+var nodes = new Object();
+nodes.nodes = [];
+nodes.addnode = function(id, x, y) {
+    type = lookup[id].name
+    var node = {type: type, id: global.uid, inputlinks: [], outputlinks: []};
+    this.nodes.push(node);
+    if (x == undefined && y == undefined) {
+        x = global.mousex
+        y = global.mousey
+    }
+    createNode(id, x, y);
+}
 
 function getElementPosition (element) {
     bodypos = document.body.getBoundingClientRect();
@@ -40,25 +55,26 @@ function constructLine(startx, starty, endx, endy) {
     return d;
 }
 
+
 // Socket constructor
 function constructSocket(io, id) {
 
 }
 
 function createWire(event, parent) {
-    selected = parent;
-    pos = getElementPosition(event.target);
-    pos[0] += 5;
-    pos[1] += 5;
+    global.selected = parent;
+    global.pos = getElementPosition(event.target);
+    global.pos[0] += 5;
+    global.pos[1] += 5;
     line = document.createElementNS("http://www.w3.org/2000/svg","path");
     line.setAttributeNS(null, "class", "cable drawing");
-    line.setAttributeNS(null, "d", constructLine(pos[0], pos[1], pos[0], pos[1]));
+    line.setAttributeNS(null, "d", constructLine(global.pos[0], global.pos[1], global.pos[0], global.pos[1]));
     line.setAttributeNS(null, "stroke", "blue");
     line.setAttributeNS(null, "stroke-width", "2");
     line.setAttributeNS(null, "fill", "none");
     line.setAttributeNS(null, "parent", parent);
     document.getElementById("svgcanvas").appendChild(line);
-    cable = line;
+    global.cable = line;
     document.addEventListener('mousemove', linkCable);
 }
 
@@ -69,8 +85,8 @@ function moveWire(wire, start, end) {
 // On right click, open menu
 $('body').mousedown(function (event) {
     if (event.which === 3) {
-        mousex = event.pageX;
-        mousey = event.pageY;
+        global.mousex = event.pageX;
+        global.mousey = event.pageY;
         createMenu(event.pageX, event.pageY);
     }
 });
@@ -86,57 +102,114 @@ UpdateList = function () {
     items = NodeSelect(userinput, functions);
     $('#menubuttonsdiv').empty();
     for (var i = 0; i < items.length; i++) {
-        $('#menubuttonsdiv').append("<button class=\"menuitem\" onclick=\"createNode(" + items[i].id + ")\")>" + items[i].name + "</button><br>");
+        $('#menubuttonsdiv').append("<button class=\"menuitem\" onclick=\"nodes.addnode(" + items[i].id + ")\")>" + items[i].name + "</button><br>");
     }
 }
 
 // On menu item click, create draggable node. Node id is given as argument
-function createNode (id) {
+function createNode (id, x, y) {
     node = lookup[id];
     var link = document.getElementById('menu').getAttribute('input');
     $('#menu').remove();
-    $('#inner').append("<div class=\"node notkinetic\" id=\"node" + uid + "\" style=\"left:" + mousex + "px;top:" + mousey + "px;\"></div>");
-    $('#node'+ uid).draggable({
+    $('#inner').append("<div class=\"node notkinetic\" id=\"node" + global.uid + "\" style=\"left:" + x + "px;top:" + y + "px;\"></div>");
+    $('#node'+ global.uid).draggable({
         drag: function(event, ui) {
-            node = ui.helper[0];
-            //find connected nodes
+            // Get properties of node
+            var node = ui.helper[0];
+            var nodeid = node.attributes.id.nodeValue;
+            var nodeidnum = +nodeid.match(/\d+$/)[0];
+            var inputs = node.childNodes[1].childNodes;
+            var outputs = node.childNodes[2].childNodes;
+            console.log(inputs);
+            for (var x = 0; x < inputs.length; x++) {
+                if(inputs[x].nodeType === 1 && inputs[x].getAttribute('link') != null) {
+                    connections = inputs[x].getAttribute('link').split(' ');
+                    for(var y = 0; y < connections.length ; y += 2) {
+                        connection = connections[y] + ' ' + connections[y+1];
+                        localconnection = node.attributes.getNamedItem('id').nodeValue + ' ' + inputs[x].getAttribute('ident');
+                        paths = document.getElementById('svgcanvas').childNodes;
+                        for (var i = 1; i < paths.length; i++){
+                            if(paths[i].getAttribute('parent') == connection && paths[i].getAttribute('child') == localconnection){
+                                parentelm = document.getElementById(connections[y]).querySelector('.outputs').querySelector('[ident = \"' + connections[y+1] + '\"]')
+                                newpos = getElementPosition(inputs[x]);
+                                parentpos = getElementPosition(parentelm);
+                                paths[i].setAttributeNS(null, 'd', constructLine(parentpos[0] + 5, parentpos[1] + 5, newpos[0] + 5, newpos[1] + 5));
+                            }
+                        }
+                    }
+                };
+            } 
+            for (var x = 0; x < outputs.length; x++) {
+                if(outputs[x].nodeType === 1 && outputs[x].getAttribute('link') != null) {
+                    connections = outputs[x].getAttribute('link').split(' ');
+                    for(var y = 0; y < connections.length ; y += 2) {
+                        connection = connections[y] + ' ' + connections[y+1];
+                        localconnection = node.attributes.getNamedItem('id').nodeValue + ' ' + outputs[x].getAttribute('ident');
+                        paths = document.getElementById('svgcanvas').childNodes;
+                        for (var i = 1; i < paths.length; i++){
+                            if(paths[i].getAttribute('child') == connection && paths[i].getAttribute('parent') == localconnection){
+                                childelm = document.getElementById(connections[y]).querySelector('.inputs').querySelector('[ident = \"' + connections[y+1] + '\"]')
+                                newpos = getElementPosition(outputs[x]);
+                                childpos = getElementPosition(childelm);
+                                paths[i].setAttributeNS(null, 'd', constructLine(newpos[0] + 5, newpos[1] + 5, childpos[0] + 5, childpos[1] + 5));
+                            }
+                        }
+                    }
+                };
+            }
         }
     });
-    $('#node'+ uid).append("<div class=\"nodename notkinetic\">" + node.name + "</div>");
-    $('#node'+ uid).append("<div id=\"inputs" + uid + "\" class=\"inputs notkinetic\"></div>");
-    $('#node'+ uid).append("<div id=\"outputs" + uid + "\" class=\"outputs notkinetic\"></div>");
-    var parentname = "node" + uid;
+    $('#node'+ global.uid).append("<div class=\"nodename notkinetic\">" + node.name + "</div>");
+    $('#node'+ global.uid).append("<div id=\"inputs" + global.uid + "\" class=\"inputs notkinetic\"></div>");
+    $('#node'+ global.uid).append("<div id=\"outputs" + global.uid + "\" class=\"outputs notkinetic\"></div>");
+    var parentname = "node" + global.uid;
     for(var i = 0; i < node.initialInputs; i++) {
-        $('#inputs'+ uid).append("<button class=\"socket input notkinetic\" parent=\"" + uid + "\" ident=\"" + i + "\" onclick=\"createWire(event, &quot;" + parentname + ' ' + i + "&quot;)\"></button> INPUT!!!!");
+        $('#inputs'+ global.uid).append("<button class=\"socket input notkinetic\" parent=\"" + global.uid + "\" ident=\"" + i + "\" onclick=\"createWire(event, &quot;" + parentname + ' ' + i + "&quot;)\"></button> INPUT!!!!");
     }
-    $('#outputs'+ uid).append("OUTPUT!!!!<button class=\"socket output notkinetic\" parent=\"" + uid + "\" ident=\"" + 0 + "\" onclick=\"createWire(event, &quot;" + parentname + ' ' + 0 + "&quot;)\"></button>");
-    uid += 1;
+    $('#outputs'+ global.uid).append("OUTPUT!!!!<button class=\"socket output notkinetic\" parent=\"" + global.uid + "\" ident=\"" + 0 + "\" onclick=\"createWire(event, &quot;" + parentname + ' ' + 0 + "&quot;)\"></button>");
+    global.uid += 1;
     if(document.getElementsByClassName('drawing')[0]){
         document.getElementById('svgcanvas').removeChild(document.getElementsByClassName('drawing')[0]);
     }
     if(link != 'undefined') {
         var linkparent = link.split(' ')[0];
         var output = link.split(' ')[1];
-        linkNodes(linkparent, output, "node" + (uid - 1), 0);
+        linkNodes(linkparent, output, "node" + (global.uid - 1), 0);
     }
 }
 
 function linkNodes (parent, output, child, input) {
+    // Get number ids from names
+    var parentid = +parent.match(/\d+$/)[0];
+    var childid = +child.match(/\d+$/)[0];
+    
+    // Set links in nodes object
+    nodes.nodes[parentid].outputlinks.push({node: childid, input: +input, output: +output});
+    nodes.nodes[childid].inputlinks.length = 0;
+    nodes.nodes[childid].inputlinks.push({node: parentid, input: +input, output: +output});
+    
     parentnode = document.getElementById(parent);
     childnode = document.getElementById(child);
-    parentnode.querySelector('.outputs').querySelector('[ident=\"' + output + '\"]').setAttribute('link', child + ' ' + input);
     parentout = parentnode.querySelector('.outputs').querySelector('[ident=\"' + output + '\"]');
+    parentlinks = ''
+    if (parentout.getAttribute('link') != null) {
+        parentlinks = ' ' + parentout.getAttribute('link');
+    }
+    parentout.setAttribute('link', child + ' ' + input + parentlinks);
     parentoutpos = getElementPosition(parentout);
-    childnode.querySelector('.inputs').querySelector('[ident=\"' + input + '\"]').setAttribute('link', parent + ' ' + output);
+    
     childout = childnode.querySelector('.inputs').querySelector('[ident=\"' + input + '\"]');
+    childout.setAttribute('link', parent + ' ' + output);
     childoutpos = getElementPosition(childout);
+    
     line = document.createElementNS("http://www.w3.org/2000/svg","path");
     line.setAttributeNS(null, "class", "cable");
     line.setAttributeNS(null, "d", constructLine(parentoutpos[0], parentoutpos[1], childoutpos[0], childoutpos[1]));
     line.setAttributeNS(null, "stroke", "blue");
     line.setAttributeNS(null, "stroke-width", "2");
     line.setAttributeNS(null, "fill", "none");
-    line.setAttributeNS(null, "parent", parent);
+    line.setAttributeNS(null, "parent", parent + ' ' + output);
+    line.setAttributeNS(null, "child", child + ' ' + input);
     document.getElementById("svgcanvas").appendChild(line);
 }
 
@@ -164,14 +237,14 @@ var MenuItem = document.registerElement('menu-item', {
 
 // Draw cable until click
 function linkCable(event) {
-    cable.setAttributeNS(null, "d", constructLine(pos[0], pos[1], event.pageX, event.pageY));
+    global.cable.setAttributeNS(null, "d", constructLine(global.pos[0], global.pos[1], event.pageX, event.pageY));
     document.addEventListener('click', connectCable);
 }
 
 function connectCable(event) {
     document.removeEventListener('mousemove', linkCable);
     document.removeEventListener('click', connectCable);
-    mousex = event.pageX;
-    mousey = event.pageY;
-    createMenu(event.pageX, event.pageY, selected);
+    global.mousex = event.pageX;
+    global.mousey = event.pageY;
+    createMenu(event.pageX, event.pageY, global.selected);
 }

@@ -120,7 +120,34 @@ function createNode (id, x, y) {
             var nodeidnum = +nodeid.match(/\d+$/)[0];
             var inputs = node.childNodes[1].childNodes;
             var outputs = node.childNodes[2].childNodes;
-            console.log(inputs);
+            var inputlinks = nodes.nodes[nodeidnum].inputlinks
+            var outputlinks = nodes.nodes[nodeidnum].outputlinks
+            for (var x = 0; x < inputlinks.length; x++) {
+                var localconnection = 'node' + nodeidnum + ' ' + inputlinks[x].input;
+                var remoteconnection = 'node' + inputlinks[x].node + ' ' + inputlinks[x].output;
+                paths = document.getElementById('svgcanvas').childNodes;
+                for (var i = 1; i < paths.length; i++) {
+                    if(paths[i].getAttribute('parent') == remoteconnection && paths[i].getAttribute('child') == localconnection){
+                        var localpos = getElementPosition(inputs[inputlinks[x].input * 2]);
+                        var remoteelement = document.getElementById('node' + inputlinks[x].node)
+                        var remotepos = getElementPosition(remoteelement.querySelector('.outputs').querySelector('[ident = \"' + inputlinks[x].output + '\"]'));
+                        paths[i].setAttributeNS(null, 'd', constructLine(remotepos[0] + 5, remotepos[1] + 5, localpos[0] + 5, localpos[1] + 5));
+                    }
+                }
+            }
+            for (var x = 0; x < outputlinks.length; x++) {
+                var localconnection = 'node' + nodeidnum + ' ' + outputlinks[x].output;
+                var remoteconnection = 'node' + outputlinks[x].node + ' ' + outputlinks[x].input;
+                paths = document.getElementById('svgcanvas').childNodes;
+                for (var i = 1; i < paths.length; i++) {
+                    if(paths[i].getAttribute('parent') == localconnection && paths[i].getAttribute('child') == remoteconnection){
+                        var localpos = getElementPosition(outputs[outputlinks[x].output * 2 + 1]);
+                        var remoteelement = document.getElementById('node' + outputlinks[x].node)
+                        var remotepos = getElementPosition(remoteelement.querySelector('.inputs').querySelector('[ident = \"' + outputlinks[x].input + '\"]'));
+                        paths[i].setAttributeNS(null, 'd', constructLine(localpos[0] + 5, localpos[1] + 5, remotepos[0] + 5, remotepos[1] + 5));
+                    }
+                }
+            } /*
             for (var x = 0; x < inputs.length; x++) {
                 if(inputs[x].nodeType === 1 && inputs[x].getAttribute('link') != null) {
                     connections = inputs[x].getAttribute('link').split(' ');
@@ -156,7 +183,7 @@ function createNode (id, x, y) {
                         }
                     }
                 };
-            }
+            } */
         }
     });
     $('#node'+ global.uid).append("<div class=\"nodename notkinetic\">" + node.name + "</div>");

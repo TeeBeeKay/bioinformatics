@@ -147,43 +147,7 @@ function createNode (id, x, y) {
                         paths[i].setAttributeNS(null, 'd', constructLine(localpos[0] + 5, localpos[1] + 5, remotepos[0] + 5, remotepos[1] + 5));
                     }
                 }
-            } /*
-            for (var x = 0; x < inputs.length; x++) {
-                if(inputs[x].nodeType === 1 && inputs[x].getAttribute('link') != null) {
-                    connections = inputs[x].getAttribute('link').split(' ');
-                    for(var y = 0; y < connections.length ; y += 2) {
-                        connection = connections[y] + ' ' + connections[y+1];
-                        localconnection = node.attributes.getNamedItem('id').nodeValue + ' ' + inputs[x].getAttribute('ident');
-                        paths = document.getElementById('svgcanvas').childNodes;
-                        for (var i = 1; i < paths.length; i++){
-                            if(paths[i].getAttribute('parent') == connection && paths[i].getAttribute('child') == localconnection){
-                                parentelm = document.getElementById(connections[y]).querySelector('.outputs').querySelector('[ident = \"' + connections[y+1] + '\"]')
-                                newpos = getElementPosition(inputs[x]);
-                                parentpos = getElementPosition(parentelm);
-                                paths[i].setAttributeNS(null, 'd', constructLine(parentpos[0] + 5, parentpos[1] + 5, newpos[0] + 5, newpos[1] + 5));
-                            }
-                        }
-                    }
-                };
-            } 
-            for (var x = 0; x < outputs.length; x++) {
-                if(outputs[x].nodeType === 1 && outputs[x].getAttribute('link') != null) {
-                    connections = outputs[x].getAttribute('link').split(' ');
-                    for(var y = 0; y < connections.length ; y += 2) {
-                        connection = connections[y] + ' ' + connections[y+1];
-                        localconnection = node.attributes.getNamedItem('id').nodeValue + ' ' + outputs[x].getAttribute('ident');
-                        paths = document.getElementById('svgcanvas').childNodes;
-                        for (var i = 1; i < paths.length; i++){
-                            if(paths[i].getAttribute('child') == connection && paths[i].getAttribute('parent') == localconnection){
-                                childelm = document.getElementById(connections[y]).querySelector('.inputs').querySelector('[ident = \"' + connections[y+1] + '\"]')
-                                newpos = getElementPosition(outputs[x]);
-                                childpos = getElementPosition(childelm);
-                                paths[i].setAttributeNS(null, 'd', constructLine(newpos[0] + 5, newpos[1] + 5, childpos[0] + 5, childpos[1] + 5));
-                            }
-                        }
-                    }
-                };
-            } */
+            }
         }
     });
     $('#node'+ global.uid).append("<div class=\"nodename notkinetic\">" + node.name + "</div>");

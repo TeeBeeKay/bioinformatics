@@ -25,11 +25,25 @@ nodes.addnode = function(id, x, y) {
     type = lookup[id].name
     var node = {type: type, id: global.uid, inputlinks: [], outputlinks: []};
     this.nodes.push(node);
-    if (x == undefined && y == undefined) {
+    if (x == undefined) {
         x = global.mousex
+    }    
+    if (y == undefined) {
         y = global.mousey
     }
     createNode(id, x, y);
+}
+
+nodes.removenode = function(uid){
+    console.log(uid);
+    nodes.nodes[uid].type = -1;
+    for(var x = 0; x < this.nodes[uid].inputlinks.length; x++){
+        console.log(this.nodes[this.nodes[uid].inputlinks[x].node].outputlinks)
+        // Remove links in node objects and then delete paths
+    }
+    delete nodes.nodes[uid];
+    var removednode = document.getElementById('node' + uid);
+    removednode.parentNode.removeChild(removednode);
 }
 
 function getElementPosition (element) {
@@ -150,7 +164,7 @@ function createNode (id, x, y) {
             }
         }
     });
-    $('#node'+ global.uid).append("<div class=\"nodename notkinetic\">" + node.name + "</div>");
+    $('#node'+ global.uid).append("<div class=\"nodename notkinetic\">" + node.name + "<button onclick=\"nodes.removenode(" + global.uid + ")\"></button></div>");
     $('#node'+ global.uid).append("<div id=\"inputs" + global.uid + "\" class=\"inputs notkinetic\"></div>");
     $('#node'+ global.uid).append("<div id=\"outputs" + global.uid + "\" class=\"outputs notkinetic\"></div>");
     var parentname = "node" + global.uid;
@@ -181,21 +195,21 @@ function linkNodes (parent, output, child, input) {
     
     parentnode = document.getElementById(parent);
     childnode = document.getElementById(child);
-    parentout = parentnode.querySelector('.outputs').querySelector('[ident=\"' + output + '\"]');
+    parentout = parentnode.querySelector('.outputs').querySelector('[ident=\"' + output + '\"]'); /*
     parentlinks = ''
     if (parentout.getAttribute('link') != null) {
         parentlinks = ' ' + parentout.getAttribute('link');
     }
-    parentout.setAttribute('link', child + ' ' + input + parentlinks);
+    parentout.setAttribute('link', child + ' ' + input + parentlinks); */
     parentoutpos = getElementPosition(parentout);
     
     childout = childnode.querySelector('.inputs').querySelector('[ident=\"' + input + '\"]');
-    childout.setAttribute('link', parent + ' ' + output);
+    //childout.setAttribute('link', parent + ' ' + output);
     childoutpos = getElementPosition(childout);
     
     line = document.createElementNS("http://www.w3.org/2000/svg","path");
     line.setAttributeNS(null, "class", "cable");
-    line.setAttributeNS(null, "d", constructLine(parentoutpos[0], parentoutpos[1], childoutpos[0], childoutpos[1]));
+    line.setAttributeNS(null, "d", constructLine(parentoutpos[0] + 5, parentoutpos[1] + 5, childoutpos[0] + 5, childoutpos[1] + 5));
     line.setAttributeNS(null, "stroke", "blue");
     line.setAttributeNS(null, "stroke-width", "2");
     line.setAttributeNS(null, "fill", "none");

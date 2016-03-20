@@ -35,15 +35,49 @@ nodes.addnode = function(id, x, y) {
 }
 
 nodes.removenode = function(uid){
-    console.log(uid);
     nodes.nodes[uid].type = -1;
     for(var x = 0; x < this.nodes[uid].inputlinks.length; x++){
-        console.log(this.nodes[this.nodes[uid].inputlinks[x].node].outputlinks)
+        localnode = this.nodes[uid];
+        var connectednode = this.nodes[localnode.inputlinks[x].node]
+        var toremove = []
+        for (var y = connectednode.outputlinks.length - 1; y > -1; y--) {
+            if (connectednode.outputlinks[y].node == uid) {
+                toremove.push(y);
+            }
+        }
+        for (var linktoremove = 0; linktoremove < toremove.length; linktoremove++){
+            connectednode.outputlinks.splice([toremove[linktoremove]], 1)
+        }
+        // Remove links in node objects and then delete paths
+    }
+    for(var x = 0; x < this.nodes[uid].outputlinks.length; x++){
+        localnode = this.nodes[uid];
+        var connectednode = this.nodes[localnode.outputlinks[x].node]
+        var toremove = []
+        for (var y = connectednode.inputlinks.length - 1; y > -1; y--) {
+            if (connectednode.inputlinks[y].node == uid) {
+                toremove.push(y);
+            }
+        }
+        for (var linktoremove = 0; linktoremove < toremove.length; linktoremove++){
+            connectednode.inputlinks.splice([toremove[linktoremove]], 1)
+        }
         // Remove links in node objects and then delete paths
     }
     delete nodes.nodes[uid];
     var removednode = document.getElementById('node' + uid);
     removednode.parentNode.removeChild(removednode);
+    paths = document.getElementById('svgcanvas').childNodes
+    removedpaths = []
+    for (var x = 1; x < paths.length; x++) {
+        console.log()
+        if (paths[x].getAttribute('parent').split(' ')[0] == 'node' + uid || paths[x].getAttribute('child').split(' ')[0] == 'node' + uid) {
+            removedpaths.push(paths[x])
+        }
+    }
+    for (var x = 0; x < removedpaths.length; x++) {
+        document.getElementById('svgcanvas').removeChild(removedpaths[x])
+    }
 }
 
 function getElementPosition (element) {
@@ -164,7 +198,7 @@ function createNode (id, x, y) {
             }
         }
     });
-    $('#node'+ global.uid).append("<div class=\"nodename notkinetic\">" + node.name + "<button onclick=\"nodes.removenode(" + global.uid + ")\"></button></div>");
+    $('#node'+ global.uid).append("<div class=\"nodename notkinetic\">" + node.name + "<button class=\"deletebutton\" onclick=\"nodes.removenode(" + global.uid + ")\">x</button></div>");
     $('#node'+ global.uid).append("<div id=\"inputs" + global.uid + "\" class=\"inputs notkinetic\"></div>");
     $('#node'+ global.uid).append("<div id=\"outputs" + global.uid + "\" class=\"outputs notkinetic\"></div>");
     var parentname = "node" + global.uid;

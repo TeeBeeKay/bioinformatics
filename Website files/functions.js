@@ -35,7 +35,7 @@ function NodeSelect(userinput, functionlist) {
     for (var i = 0; i < functionlist.length; i++) {
         var hit = false;
         for (var prop in functionlist[i]) {
-            if(prop != "id") {
+            if(prop != "id" && typeof functionlist[i][prop] == 'string') {
                 if(functionlist[i][prop].toLowerCase().indexOf(userinput.toLowerCase()) > -1) {
                     hit = true;
                 }

@@ -53,3 +53,54 @@ function NodeSelect(userinput, functionlist) {
     }
     return(returnlist);
 } 
+
+// Function to update the list whenever input is detected
+UpdateList = function (event) {
+    var userinput = '';
+    console.log(event.type)
+    if (event.type === 'input') {
+        userinput = event.target.value;
+    }
+    items = NodeSelect(userinput, functions);
+    $('#menubuttonsdiv').empty();
+    for (var i = 0; i < items.length; i++) {
+        $('#menubuttonsdiv').append("<button class=\"menuitem\" onclick=\"nodes.addnode(" + items[i].id + ")\")>" + items[i].name + "</button><br>");
+    }
+}
+
+// Function to update the side list whenever input is detected
+UpdateSideList = function (event) {
+    var userinput = '';
+    console.log(event);
+    if (event != undefined && event.type === 'input') {
+        userinput = event.target.value;
+    }
+    items = NodeSelect(userinput, functions);
+    $('#sidemenubuttonsdiv').empty();
+    for (var i = 0; i < items.length; i++) {
+        $('#sidemenubuttonsdiv').append("<button class=\"menuitem\" onclick=\"nodes.addnode(" + items[i].id + ")\")>" + items[i].name + "</button><br>");
+    }
+}
+
+function placesidemenu() {
+    var sidemenu = document.createElement('div');
+    sidemenu.id = 'sidemenu';
+    sidemenu.className = 'sidemenu notkinetic';
+    
+    var sidetext = document.createElement('input');
+    sidetext.id = 'sidemenuinput';
+    sidetext.className = 'sidemenuinput notkinetic';
+    sidetext.setAttribute('oninput', 'UpdateSideList(event)');
+    
+    var sidemenubuttonsdiv = document.createElement('div');
+    sidemenubuttonsdiv.id = 'sidemenubuttonsdiv';
+    sidemenubuttonsdiv.className = 'sidemenubuttonsdiv notkinetic';
+    
+    sidemenu.appendChild(sidetext);
+    sidemenu.appendChild(sidemenubuttonsdiv);
+    document.body.appendChild(sidemenu);
+    
+    UpdateSideList();
+}
+
+placesidemenu();

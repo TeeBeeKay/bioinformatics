@@ -10,6 +10,55 @@ $('body').kinetic({
 // Import list of nodes
 $.getScript("functions.js");
 
+
+// Function to update the list whenever input is detected
+UpdateList = function (event) {
+    var userinput = '';
+    console.log(event.type)
+    if (event.type === 'input') {
+        userinput = event.target.value;
+    }
+    items = NodeSelect(userinput, functions);
+    $('#menubuttonsdiv').empty();
+    for (var i = 0; i < items.length; i++) {
+        $('#menubuttonsdiv').append("<button class=\"menuitem\" onclick=\"nodes.addnode(" + items[i].id + ")\")>" + items[i].name + "</button><br>");
+    }
+}
+
+// Function to update the side list whenever input is detected
+UpdateSideList = function (event) {
+    var userinput = '';
+    console.log(event);
+    if (event != undefined && event.type === 'input') {
+        userinput = event.target.value;
+    }
+    items = NodeSelect(userinput, functions);
+    $('#sidemenubuttonsdiv').empty();
+    for (var i = 0; i < items.length; i++) {
+        $('#sidemenubuttonsdiv').append("<button class=\"menuitem\" onclick=\"nodes.addnode(" + items[i].id + ")\")>" + items[i].name + "</button><br>");
+    }
+}
+
+function placesidemenu() {
+    var sidemenu = document.createElement('div');
+    sidemenu.id = 'sidemenu';
+    sidemenu.className = 'sidemenu notkinetic';
+    
+    var sidetext = document.createElement('input');
+    sidetext.id = 'sidemenuinput';
+    sidetext.className = 'sidemenuinput notkinetic';
+    sidetext.setAttribute('oninput', 'UpdateSideList(event)');
+    
+    var sidemenubuttonsdiv = document.createElement('div');
+    sidemenubuttonsdiv.id = 'sidemenubuttonsdiv';
+    sidemenubuttonsdiv.className = 'sidemenubuttonsdiv notkinetic';
+    
+    sidemenu.appendChild(sidetext);
+    sidemenu.appendChild(sidemenubuttonsdiv);
+    document.body.appendChild(sidemenu);
+    
+}
+
 // Set unique node id
 var global = new Object();
 global.uid = 0;
@@ -109,6 +158,7 @@ function constructSocket(io, id) {
 
 }
 
+
 function createWire(event, parent) {
     if(!global.drawing){
         global.selected = parent;
@@ -144,20 +194,14 @@ function createMenu(x, y, input) {
     $("body").append("<div is=\"x-menu\" id=\"menu\" class=\"menu\" input=\"" + input + "\" style=\"left: " + x + "px;top: " + y + "px;\"></div>");
 }
 
-// Function to update the list whenever input is detected
-UpdateList = function () {
-    userinput = $('#menuinput').val();
-    items = NodeSelect(userinput, functions);
-    $('#menubuttonsdiv').empty();
-    for (var i = 0; i < items.length; i++) {
-        $('#menubuttonsdiv').append("<button class=\"menuitem\" onclick=\"nodes.addnode(" + items[i].id + ")\")>" + items[i].name + "</button><br>");
-    }
-}
-
 // On menu item click, create draggable node. Node id is given as argument
 function createNode (id, x, y) {
     node = lookup[id];
-    var link = document.getElementById('menu').getAttribute('input');
+    var link = 'undefined';
+    if (document.getElementById('menu')) {
+        console.log('hit')
+        link = document.getElementById('menu').getAttribute('input');
+    }
     $('#menu').remove();
     $('#inner').append("<div class=\"node notkinetic\" id=\"node" + global.uid + "\" style=\"left:" + x + "px;top:" + y + "px;\"></div>");
     $('#node'+ global.uid).draggable({
@@ -254,10 +298,10 @@ function linkNodes (parent, output, child, input) {
 var MenuElementProto = Object.create(HTMLDivElement.prototype);
 MenuElementProto.attachedCallback = function () {
     $(this).append("<b>Insert</b>");
-    $(this).append("<input type=\"text\" oninput=\"UpdateList()\" id=\"menuinput\">");
+    $(this).append("<input type=\"text\" oninput=\"UpdateList(event)\" id=\"menuinput\">");
     $(this).append("<div id=\"menubuttonsdiv\"></div>")
     this.style.overflow="hidden";
-    UpdateList();
+    UpdateList(event);
 };
 var MenuElement = document.registerElement('x-menu', {
     prototype: MenuElementProto,

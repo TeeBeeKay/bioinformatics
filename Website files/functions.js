@@ -57,7 +57,6 @@ function NodeSelect(userinput, functionlist) {
 // Function to update the list whenever input is detected
 UpdateList = function (event) {
     var userinput = '';
-    console.log(event.type)
     if (event.type === 'input') {
         userinput = event.target.value;
     }
@@ -71,7 +70,6 @@ UpdateList = function (event) {
 // Function to update the side list whenever input is detected
 UpdateSideList = function (event) {
     var userinput = '';
-    console.log(event);
     if (event != undefined && event.type === 'input') {
         userinput = event.target.value;
     }

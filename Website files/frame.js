@@ -31,15 +31,23 @@ function placesidemenu() {
 }
 
 function placenode(id) {
-    global.tocreate = id;
-    document.addEventListener('click', placenodeclick);
+    uid = nodes.addnode(id, event.pageX, event.pageY);
+    global.selected = 'node' + uid;
+    document.addEventListener('mousemove', placenodemove);
+    document.addEventListener('click', placenodeclick, true);
+}
+
+function placenodemove(event) {
+    setNodePosition(global.selected, event.pageX, event.pageY);
 }
 
 function placenodeclick() {
-    var id = global.tocreate;
-    nodes.addnode(id, event.pageX, event.pageY);
+    document.removeEventListener('mousemove', placenodemove);
     document.removeEventListener('click', placenodeclick);
-    
+}
+
+function setNodePosition (nodeid, x, y) {
+    document.getElementById(nodeid).setAttribute('style', 'left: ' + x + 'px; top:' + y + 'px;');
 }
 
 // Set unique node id
@@ -66,6 +74,7 @@ nodes.addnode = function(id, x, y) {
         y = global.mousey
     }
     createNode(id, x, y);
+    return node.id;
 }
 
 nodes.removenode = function(uid){
@@ -183,7 +192,6 @@ function createNode (id, x, y) {
     node = lookup[id];
     var link = 'undefined';
     if (document.getElementById('menu')) {
-        console.log('hit')
         link = document.getElementById('menu').getAttribute('input');
     }
     $('#menu').remove();

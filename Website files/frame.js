@@ -8,7 +8,14 @@ $('body').kinetic({
 });
 
 // Import list of nodes
-$.getScript("functions.js");
+//$.getScript("functions.js");
+// http://www.objgen.com/json/models/IfA8
+var nodetypes;
+$.getJSON('nodes.json', function(data) {
+    nodes.types = data.nodetypes;
+    placesidemenu();
+    UpdateSideList();
+})
 
 function placesidemenu() {
     var sidemenu = document.createElement('div');
@@ -63,6 +70,7 @@ global.drawing = false;
 
 var nodes = new Object();
 nodes.nodes = [];
+nodes.types;
 nodes.addnode = function(id, x, y) {
     type = lookup[id].name
     var node = {type: type, id: global.uid, inputlinks: [], outputlinks: []};

@@ -8,11 +8,13 @@ $('body').kinetic({
 });
 
 // Import list of nodes
-//$.getScript("functions.js");
 // http://www.objgen.com/json/models/IfA8
-var nodetypes;
 $.getJSON('nodes.json', function(data) {
     nodes.types = data.nodetypes;
+    
+    for (var i = 0, len = data.nodetypes.length; i < len; i++) {
+        global.lookup[data.nodetypes[i].id] = nodes.types[i]
+    }
     placesidemenu();
     UpdateSideList();
 })
@@ -32,9 +34,63 @@ function placesidemenu() {
     sidemenubuttonsdiv.className = 'sidemenubuttonsdiv notkinetic';
     
     sidemenu.appendChild(sidetext);
+    sidemenu.appendChild(document.createElement('p'));
     sidemenu.appendChild(sidemenubuttonsdiv);
     document.body.appendChild(sidemenu);
     
+}
+
+// Function to return only relevant nodes
+function NodeSelect(userinput) {
+    var returnlist = [];
+    for (var i = 0; i < nodes.types.length; i++) {
+        var hit = false; 
+        
+        if (!hit && nodes.types[i]['description'].toLowerCase().indexOf(userinput.toLowerCase()) > -1) {
+            hit = true;
+        }
+        
+        if (!hit && nodes.types[i]['name'].toLowerCase().indexOf(userinput.toLowerCase()) > -1) {
+            hit = true;
+        }
+        
+        if (!hit && nodes.types[i]['tags'].toLowerCase().indexOf(userinput.toLowerCase()) > -1) {
+            hit = true;
+        }
+        
+        /*
+        for (var prop in functionlist[i]) {
+            if(prop != "id" && typeof functionlist[i][prop] == 'string') {
+                if(functionlist[i][prop].toLowerCase().indexOf(userinput.toLowerCase()) > -1) {
+                    hit = true;
+                }
+            }
+            if(hit) {
+                break;
+            }
+        } */
+        
+        if(hit) {
+            returnlist.push(nodes.types[i]);
+        }
+    }
+    if(returnlist.length == 0) {
+        returnlist = nodes.types;
+    }
+    return(returnlist);
+} 
+
+// Function to update the side list whenever input is detected
+UpdateSideList = function (event) {
+    var userinput = '';
+    if (event != undefined && event.type === 'input') {
+        userinput = event.target.value;
+    }
+    items = NodeSelect(userinput);
+    $('#sidemenubuttonsdiv').empty();
+    for (var i = 0; i < items.length; i++) {
+        $('#sidemenubuttonsdiv').append("<button class=\"menuitem\" onclick=\"placenode(" + items[i].id + ")\")>" + items[i].name + "</button><br>");
+    }
 }
 
 function placenode(id) {
@@ -67,12 +123,13 @@ global.pos;
 global.selected;
 global.tocreate;
 global.drawing = false;
+global.lookup = {};
 
 var nodes = new Object();
 nodes.nodes = [];
 nodes.types;
 nodes.addnode = function(id, x, y) {
-    type = lookup[id].name
+    type = global.lookup[id].name
     var node = {type: type, id: global.uid, inputlinks: [], outputlinks: []};
     this.nodes.push(node);
     if (x == undefined) {
@@ -197,7 +254,7 @@ function createMenu(x, y, input) {
 
 // On menu item click, create draggable node. Node id is given as argument
 function createNode (id, x, y) {
-    node = lookup[id];
+    node = global.lookup[id];
     var link = 'undefined';
     if (document.getElementById('menu')) {
         link = document.getElementById('menu').getAttribute('input');
@@ -246,8 +303,10 @@ function createNode (id, x, y) {
     $('#node'+ global.uid).append("<div id=\"inputs" + global.uid + "\" class=\"inputs notkinetic\"></div>");
     $('#node'+ global.uid).append("<div id=\"outputs" + global.uid + "\" class=\"outputs notkinetic\"></div>");
     var parentname = "node" + global.uid;
-    for(var i = 0; i < node.initialInputs; i++) {
-        $('#inputs'+ global.uid).append("<button class=\"socket input notkinetic\" parent=\"" + global.uid + "\" ident=\"" + i + "\" onclick=\"createWire(event, &quot;" + parentname + ' ' + i + " input&quot;)\"></button> INPUT!!!!");
+    for(var i = 0; i < node.inputs.length; i++) {
+        for(var j = 0; j < node.inputs[i].initial; j++){
+            $('#inputs'+ global.uid).append("<button class=\"socket input notkinetic\" parent=\"" + global.uid + "\" ident=\"" + i + "\" onclick=\"createWire(event, &quot;" + parentname + ' ' + i + " input&quot;)\"></button> " + node.inputs[i].label);
+        }
     }
     $('#outputs'+ global.uid).append("OUTPUT!!!!<button class=\"socket output notkinetic\" parent=\"" + global.uid + "\" ident=\"" + 0 + "\" onclick=\"createWire(event, &quot;" + parentname + ' ' + 0 + " output&quot;)\"></button>");
     global.uid += 1;

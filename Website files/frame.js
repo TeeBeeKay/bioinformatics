@@ -10,35 +10,6 @@ $('body').kinetic({
 // Import list of nodes
 $.getScript("functions.js");
 
-
-// Function to update the list whenever input is detected
-UpdateList = function (event) {
-    var userinput = '';
-    console.log(event.type)
-    if (event.type === 'input') {
-        userinput = event.target.value;
-    }
-    items = NodeSelect(userinput, functions);
-    $('#menubuttonsdiv').empty();
-    for (var i = 0; i < items.length; i++) {
-        $('#menubuttonsdiv').append("<button class=\"menuitem\" onclick=\"nodes.addnode(" + items[i].id + ")\")>" + items[i].name + "</button><br>");
-    }
-}
-
-// Function to update the side list whenever input is detected
-UpdateSideList = function (event) {
-    var userinput = '';
-    console.log(event);
-    if (event != undefined && event.type === 'input') {
-        userinput = event.target.value;
-    }
-    items = NodeSelect(userinput, functions);
-    $('#sidemenubuttonsdiv').empty();
-    for (var i = 0; i < items.length; i++) {
-        $('#sidemenubuttonsdiv').append("<button class=\"menuitem\" onclick=\"nodes.addnode(" + items[i].id + ")\")>" + items[i].name + "</button><br>");
-    }
-}
-
 function placesidemenu() {
     var sidemenu = document.createElement('div');
     sidemenu.id = 'sidemenu';
@@ -59,6 +30,18 @@ function placesidemenu() {
     
 }
 
+function placenode(id) {
+    global.tocreate = id;
+    document.addEventListener('click', placenodeclick);
+}
+
+function placenodeclick() {
+    var id = global.tocreate;
+    nodes.addnode(id, event.pageX, event.pageY);
+    document.removeEventListener('click', placenodeclick);
+    
+}
+
 // Set unique node id
 var global = new Object();
 global.uid = 0;
@@ -67,6 +50,7 @@ global.mousey = 0;
 global.cable;
 global.pos;
 global.selected;
+global.tocreate;
 global.drawing = false;
 
 var nodes = new Object();

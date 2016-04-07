@@ -9,6 +9,7 @@
       "tags": "sequence fasta file input DNA protein",
       "inputs": [
         {
+          "label": "Input sequence",
           "type": "sequence",
           "initial": 1,
           "max": -1
@@ -16,6 +17,7 @@
       ],
       "outputs": [
         {
+          "label": "Sequence",
           "type": "sequence",
           "initial": 1,
           "max": -1
@@ -39,6 +41,7 @@
       "tags": "search blast database",
       "inputs": [
         {
+          "label": "Input sequences",
           "type": "sequence",
           "initial": 1,
           "max": -1
@@ -46,11 +49,13 @@
       ],
       "outputs": [
         {
+          "label": "Blast data",
           "type": "blastdata",
           "initial": 1,
           "max": 1
         },
         {
+          "label": "Top sequences",
           "type": "sequence",
           "initial": 1,
           "max": -1
@@ -77,6 +82,15 @@
               "label": "tblastx"
             }
           ]
+        },
+        {
+          "label": "Database",
+          "type": "dropdown",
+          "options": [
+            {
+              "label": "swissprot"
+            }
+          ]
         }
       ]
     },
@@ -87,14 +101,16 @@
       "tags": "protein digest peptides",
       "inputs": [
         {
-          "type": "sequence",
+          "label": "Protein sequence",
+          "type": "protein sequence",
           "initial": 1,
           "max": -1
         }
       ],
       "outputs": [
         {
-          "type": "sequence",
+          "label": "Peptides",
+          "type": "protein sequence",
           "initial": 1,
           "max": -1
         }
@@ -109,6 +125,104 @@
             },
             {
               "label": "Chymotrypsin"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "DNA digest",
+      "description": "Digest a DNA sequence using restriction enzymes",
+      "tags": "DNA digest restriction enzymes EcoR1 BamH1",
+      "inputs": [
+        {
+          "label": "DNA sequence",
+          "type": "DNA sequence",
+          "initial": 1,
+          "max": -1
+        }
+      ],
+      "outputs": [
+        {
+          "label": "DNA sequences",
+          "type": "DNA sequence",
+          "initial": 1,
+          "max": -1
+        }
+      ],
+      "settings": [
+        {
+          "label": "Enzyme",
+          "type": "radio",
+          "options": [
+            {
+              "label": "EcoR1"
+            },
+            {
+              "label": "BamH1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Protein mass",
+      "description": "Evaluate the expected mass of a protein sequence",
+      "tags": "mass kDa molecular weight",
+      "inputs": [
+        {
+          "label": "Protein sequence",
+          "type": "protein sequence",
+          "initial": 1,
+          "max": -1
+        }
+      ],
+      "outputs": [
+        {
+          "label": "Mass",
+          "type": "number",
+          "initial": 1,
+          "max": -1
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Transcribe/translate",
+      "description": "Transcribe and/or translate a DNA or mRNA sequence",
+      "tags": "DNA transcribe translate mRNA",
+      "inputs": [
+        {
+          "label": "DNA sequence",
+          "type": "DNA sequence",
+          "initial": 1,
+          "max": -1
+        }
+      ],
+      "outputs": [
+        {
+          "label": "Transcribed mRNA sequences",
+          "type": "mRNA sequence",
+          "initial": 1,
+          "max": -1
+        },
+        {
+          "label": "Translated protein sequences",
+          "type": "protein sequence"
+        }
+      ],
+      "settings": [
+        {
+          "label": "Enzyme",
+          "type": "radio",
+          "options": [
+            {
+              "label": "EcoR1"
+            },
+            {
+              "label": "BamH1"
             }
           ]
         }

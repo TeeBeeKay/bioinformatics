@@ -78,7 +78,7 @@ UpdateSideList = function (event) {
     items = NodeSelect(userinput, functions);
     $('#sidemenubuttonsdiv').empty();
     for (var i = 0; i < items.length; i++) {
-        $('#sidemenubuttonsdiv').append("<button class=\"menuitem\" onclick=\"nodes.addnode(" + items[i].id + ")\")>" + items[i].name + "</button><br>");
+        $('#sidemenubuttonsdiv').append("<button class=\"menuitem\" onclick=\"placenode(" + items[i].id + ")\")>" + items[i].name + "</button><br>");
     }
 }
 
@@ -97,6 +97,7 @@ function placesidemenu() {
     sidemenubuttonsdiv.className = 'sidemenubuttonsdiv notkinetic';
     
     sidemenu.appendChild(sidetext);
+    sidemenu.appendChild(document.createElement('p'));
     sidemenu.appendChild(sidemenubuttonsdiv);
     document.body.appendChild(sidemenu);
     

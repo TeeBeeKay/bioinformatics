@@ -108,6 +108,7 @@
 .outputs {
     padding: 5px;
     display: table-cell;
+    text-align: right;
 }
 
 .deletebutton {

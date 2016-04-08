@@ -267,10 +267,12 @@ function createNode (id, x, y) {
             var node = ui.helper[0];
             var nodeid = node.attributes.id.nodeValue;
             var nodeidnum = +nodeid.match(/\d+$/)[0];
-            var inputs = node.childNodes[1].childNodes;
-            var outputs = node.childNodes[2].childNodes;
+            var inputs = document.getElementById('inputs'+nodeidnum).childNodes;
+            var outputs = document.getElementById('outputs'+nodeidnum).childNodes;
             var inputlinks = nodes.nodes[nodeidnum].inputlinks
             var outputlinks = nodes.nodes[nodeidnum].outputlinks
+            
+            
             for (var x = 0; x < inputlinks.length; x++) {
                 var localconnection = 'node' + nodeidnum + ' ' + inputlinks[x].input;
                 var remoteconnection = 'node' + inputlinks[x].node + ' ' + inputlinks[x].output;
@@ -300,6 +302,7 @@ function createNode (id, x, y) {
         }
     });
     $('#node'+ global.uid).append("<div class=\"nodename notkinetic\">" + node.name + "<button class=\"deletebutton\" onclick=\"nodes.removenode(" + global.uid + ")\">x</button></div>");
+    $('#node'+ global.uid).append("<div class=\"notkinetic\" style=\"height:5px;\"></div>");
     $('#node'+ global.uid).append("<div id=\"inputs" + global.uid + "\" class=\"inputs notkinetic\"></div>");
     $('#node'+ global.uid).append("<div id=\"outputs" + global.uid + "\" class=\"outputs notkinetic\"></div>");
     var parentname = "node" + global.uid;
@@ -308,7 +311,11 @@ function createNode (id, x, y) {
             $('#inputs'+ global.uid).append("<button class=\"socket input notkinetic\" parent=\"" + global.uid + "\" ident=\"" + i + "\" onclick=\"createWire(event, &quot;" + parentname + ' ' + i + " input&quot;)\"></button> " + node.inputs[i].label);
         }
     }
-    $('#outputs'+ global.uid).append("OUTPUT!!!!<button class=\"socket output notkinetic\" parent=\"" + global.uid + "\" ident=\"" + 0 + "\" onclick=\"createWire(event, &quot;" + parentname + ' ' + 0 + " output&quot;)\"></button>");
+    for(var i = 0; i < node.outputs.length; i++){
+        for(var j = 0; j < node.outputs[i].initial; j++){
+            $('#outputs'+ global.uid).append(node.outputs[i].label + "<button class=\"socket output notkinetic\" parent=\"" + global.uid + "\" ident=\"" + 0 + "\" onclick=\"createWire(event, &quot;" + parentname + ' ' + 0 + " output&quot;)\"></button><p></p>");
+        }
+    }
     global.uid += 1;
     while(document.getElementsByClassName('drawing')[0]){
         document.getElementById('svgcanvas').removeChild(document.getElementsByClassName('drawing')[0]);

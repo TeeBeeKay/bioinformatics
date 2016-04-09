@@ -115,3 +115,8 @@
     float: right;
     background-color: #E0E0E0;
 }
+
+.settings {
+    bottom: 0px;
+    position: fixed;
+}

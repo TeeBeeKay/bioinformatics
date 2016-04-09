@@ -33,9 +33,14 @@ function placesidemenu() {
     sidemenubuttonsdiv.id = 'sidemenubuttonsdiv';
     sidemenubuttonsdiv.className = 'sidemenubuttonsdiv notkinetic';
     
+    var settings = document.createElement('div');
+    settings.id = 'settings';
+    settings.className = 'settings';
+    
     sidemenu.appendChild(sidetext);
     sidemenu.appendChild(document.createElement('p'));
     sidemenu.appendChild(sidemenubuttonsdiv);
+    sidemenu.appendChild(settings);
     document.body.appendChild(sidemenu);
     
 }
@@ -79,6 +84,19 @@ function NodeSelect(userinput) {
     }
     return(returnlist);
 } 
+
+// Function to update the list whenever input is detected
+UpdateList = function (event) {
+    var userinput = '';
+    if (event.type === 'input') {
+        userinput = event.target.value;
+    }
+    items = NodeSelect(userinput);
+    $('#menubuttonsdiv').empty();
+    for (var i = 0; i < items.length; i++) {
+        $('#menubuttonsdiv').append("<button class=\"menuitem\" onclick=\"nodes.addnode(" + items[i].id + ")\")>" + items[i].name + "</button><br>");
+    }
+}
 
 // Function to update the side list whenever input is detected
 UpdateSideList = function (event) {
@@ -129,8 +147,13 @@ var nodes = new Object();
 nodes.nodes = [];
 nodes.types;
 nodes.addnode = function(id, x, y) {
-    type = global.lookup[id].name
-    var node = {type: type, id: global.uid, inputlinks: [], outputlinks: []};
+    var type = global.lookup[id].name;
+    var settings = global.lookup[id].settings;
+    var node = {type: type, id: global.uid, inputlinks: [], outputlinks: [], settings: []};
+    for (var i = 0; i < settings.length; i++) {
+        console.log(settings[i]);
+        node.settings.push({settings, value: null})
+    }
     this.nodes.push(node);
     if (x == undefined) {
         x = global.mousex
@@ -292,7 +315,7 @@ function createNode (id, x, y) {
                 paths = document.getElementById('svgcanvas').childNodes;
                 for (var i = 1; i < paths.length; i++) {
                     if(paths[i].getAttribute('parent') == localconnection && paths[i].getAttribute('child') == remoteconnection){
-                        var localpos = getElementPosition(outputs[outputlinks[x].output * 2 + 1]);
+                        var localpos = getElementPosition(outputs[outputlinks[x].output * 3 + 1]);
                         var remoteelement = document.getElementById('node' + outputlinks[x].node)
                         var remotepos = getElementPosition(remoteelement.querySelector('.inputs').querySelector('[ident = \"' + outputlinks[x].input + '\"]'));
                         paths[i].setAttributeNS(null, 'd', constructLine(localpos[0] + 5, localpos[1] + 5, remotepos[0] + 5, remotepos[1] + 5));
@@ -306,15 +329,19 @@ function createNode (id, x, y) {
     $('#node'+ global.uid).append("<div id=\"inputs" + global.uid + "\" class=\"inputs notkinetic\"></div>");
     $('#node'+ global.uid).append("<div id=\"outputs" + global.uid + "\" class=\"outputs notkinetic\"></div>");
     var parentname = "node" + global.uid;
+    var count = 0;
     for(var i = 0; i < node.inputs.length; i++) {
         for(var j = 0; j < node.inputs[i].initial; j++){
-            $('#inputs'+ global.uid).append("<button class=\"socket input notkinetic\" parent=\"" + global.uid + "\" ident=\"" + i + "\" onclick=\"createWire(event, &quot;" + parentname + ' ' + i + " input&quot;)\"></button> " + node.inputs[i].label);
+            $('#inputs'+ global.uid).append("<button class=\"socket input notkinetic\" parent=\"" + global.uid + "\" ident=\"" + count + "\" onclick=\"createWire(event, &quot;" + parentname + ' ' + count + " input&quot;)\"></button> " + node.inputs[i].label);
         }
+        count++;
     }
+    count = 0;
     for(var i = 0; i < node.outputs.length; i++){
         for(var j = 0; j < node.outputs[i].initial; j++){
-            $('#outputs'+ global.uid).append(node.outputs[i].label + "<button class=\"socket output notkinetic\" parent=\"" + global.uid + "\" ident=\"" + 0 + "\" onclick=\"createWire(event, &quot;" + parentname + ' ' + 0 + " output&quot;)\"></button><p></p>");
+            $('#outputs'+ global.uid).append(node.outputs[i].label + "<button class=\"socket output notkinetic\" parent=\"" + global.uid + "\" ident=\"" + count + "\" onclick=\"createWire(event, &quot;" + parentname + ' ' + count + " output&quot;)\"></button><p></p>");
         }
+        count++;
     }
     global.uid += 1;
     while(document.getElementsByClassName('drawing')[0]){
@@ -400,7 +427,7 @@ function connectCable(event) {
             linkNodes(targetparent, targetident, localparent, localident)
         }
         else {
-            linkNodes(localparent, localident, targetparent, targetident)
+            linkNodes(localparent, localident, targetparent, targetident);
         }
     }
     else {

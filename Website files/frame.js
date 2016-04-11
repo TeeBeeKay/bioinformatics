@@ -269,6 +269,62 @@ function updatesettingsvalue(event, nodeid, property) {
     nodes.nodes[nodeid].settings.values[property] = event.target.value;
 }
 
+function selectnode(event) {
+    console.log(event.target); // Targetting wrong thing!!!
+    var idnum = event.target.getAttribute('idnum');
+    console.log(idnum);
+    var node = nodes.nodes[idnum];
+    console.log(node)
+    var settingsdiv = document.getElementById('settings');
+    global.selectednode = idnum;
+    console.log(nodes.nodes);
+    if(node.settings.settings) {
+        for (var i = 0; i < node.settings.settings.length; i++) {
+            switch(node.settings.settings[i].type) {
+                case 'textbox':
+                    settingsdiv.innerHTML += node.settings.settings[i].label + ':';
+                    settingsdiv.appendChild(document.createElement('br'));
+                    node.settings.values[node.settings.settings[i].label] = '';
+                    break;
+                case 'dropdown':
+                    settingsdiv.innerHTML += node.settings.settings[i].label + ':';
+                    settingsdiv.appendChild(document.createElement('br'));
+                    var dropdown = document.createElement('select');
+                    dropdown.className = 'notkinetic';
+                    dropdown.setAttribute('onchange', 'updatesettingsvalue(event, '+ node.id +', \''+ node.settings.settings[i].label +'\')')
+                    for (var j = 0; j < node.settings.settings[i].options.length; j++) {
+                        var option = document.createElement('option');
+                        option.innerHTML = node.settings.settings[i].options[j];
+                        option.value = node.settings.settings[i].options[j];
+                        dropdown.appendChild(option)
+
+                    }
+                    settingsdiv.appendChild(dropdown);
+                    break;
+                case 'radio':
+                    settingsdiv.innerHTML += node.settings.settings[i].label + ':';
+                    settingsdiv.appendChild(document.createElement('br'));
+                    for (var j = 0; j < settings[i].options.length; j++) {
+                        var radio = document.createElement('input');
+                        radio.className = 'notkinetic';
+                        radio.value = settings[i].options[j];
+                        // Check selected option
+                        if (radio.value === node.settings.values[settings[i].label]) {
+                            radio.setAttribute('checked', 'true');
+                        }
+                        radio.setAttribute('type', 'radio');
+                        radio.setAttribute('name', settings[i].label);
+                        radio.setAttribute('onchange', 'updatesettingsvalue(event, '+ node.id +', \''+ settings[i].label +'\')');
+                        settingsdiv.appendChild(radio);
+                        settingsdiv.innerHTML += settings[i].options[j];
+                        settingsdiv.appendChild(document.createElement('br'))
+                    }
+                    break;
+            }
+        }
+    }
+}
+
 function getElementPosition (element) {
     bodypos = document.body.getBoundingClientRect();
     elepos = element.getBoundingClientRect();
@@ -342,7 +398,8 @@ function createNode (id, x, y) {
         link = document.getElementById('menu').getAttribute('input');
     }
     $('#menu').remove();
-    $('#inner').append("<div class=\"node notkinetic\" id=\"node" + global.uid + "\" style=\"left:" + x + "px;top:" + y + "px;\"></div>");
+    $('#inner').append("<div class=\"node notkinetic\" id=\"node" + global.uid + "\" idnum=\"" + global.uid + "\" style=\"left:" + x + "px;top:" + y + "px;\"></div>");
+    document.getElementById('node'+global.uid).addEventListener('click', selectnode, true);
     $('#node'+ global.uid).draggable({
         drag: function(event, ui) {
             // Get properties of node

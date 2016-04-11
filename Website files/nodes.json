@@ -64,30 +64,18 @@
           "label": "Blast program",
           "type": "radio",
           "options": [
-            {
-              "label": "blastn"
-            },
-            {
-              "label": "blastp"
-            },
-            {
-              "label": "blastx"
-            },
-            {
-              "label": "tblastn"
-            },
-            {
-              "label": "tblastx"
-            }
+            "blastn",
+            "blastp",
+            "blastx",
+            "tblastn",
+            "tblastx"
           ]
         },
         {
           "label": "Database",
           "type": "dropdown",
           "options": [
-            {
-              "label": "swissprot"
-            }
+            "swissprot"
           ]
         }
       ]
@@ -118,12 +106,8 @@
           "label": "Enzyme",
           "type": "radio",
           "options": [
-            {
-              "label": "Trypsin"
-            },
-            {
-              "label": "Chymotrypsin"
-            }
+            "Trypsin",
+            "Chymotrypsin"
           ]
         }
       ]
@@ -154,12 +138,8 @@
           "label": "Enzyme",
           "type": "radio",
           "options": [
-            {
-              "label": "EcoR1"
-            },
-            {
-              "label": "BamH1"
-            }
+            "EcoR1",
+            "BamH1"
           ]
         }
       ]
@@ -215,15 +195,26 @@
       ],
       "settings": [
         {
-          "label": "Enzyme",
-          "type": "radio",
+          "label": "Codon table",
+          "type": "dropdown",
           "options": [
-            {
-              "label": "EcoR1"
-            },
-            {
-              "label": "BamH1"
-            }
+            "Standard code",
+            "Vertebrate mitochondrial"
+          ]
+        },
+        {
+          "label": "frame",
+          "type": "dropdown",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "-1",
+            "-2",
+            "-3",
+            "Forward",
+            "Reverse",
+            "All"
           ]
         }
       ]

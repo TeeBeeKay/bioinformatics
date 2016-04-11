@@ -35,7 +35,7 @@ function placesidemenu() {
     
     var settings = document.createElement('div');
     settings.id = 'settings';
-    settings.className = 'settings';
+    settings.className = 'settings notkinetic';
     
     sidemenu.appendChild(sidetext);
     sidemenu.appendChild(document.createElement('p'));
@@ -62,18 +62,6 @@ function NodeSelect(userinput) {
         if (!hit && nodes.types[i]['tags'].toLowerCase().indexOf(userinput.toLowerCase()) > -1) {
             hit = true;
         }
-        
-        /*
-        for (var prop in functionlist[i]) {
-            if(prop != "id" && typeof functionlist[i][prop] == 'string') {
-                if(functionlist[i][prop].toLowerCase().indexOf(userinput.toLowerCase()) > -1) {
-                    hit = true;
-                }
-            }
-            if(hit) {
-                break;
-            }
-        } */
         
         if(hit) {
             returnlist.push(nodes.types[i]);
@@ -142,6 +130,7 @@ global.selected;
 global.tocreate;
 global.drawing = false;
 global.lookup = {};
+global.selectednode;
 
 var nodes = new Object();
 nodes.nodes = [];
@@ -150,10 +139,7 @@ nodes.addnode = function(id, x, y) {
     var type = global.lookup[id].name;
     var settings = global.lookup[id].settings;
     var node = {type: type, id: global.uid, inputlinks: [], outputlinks: [], settings: []};
-    for (var i = 0; i < settings.length; i++) {
-        console.log(settings[i]);
-        node.settings.push({settings, value: null})
-    }
+    node.settings = [];
     this.nodes.push(node);
     if (x == undefined) {
         x = global.mousex
@@ -162,6 +148,64 @@ nodes.addnode = function(id, x, y) {
         y = global.mousey
     }
     createNode(id, x, y);
+    global.selectednode = node.id;
+    
+    //
+    // Fill settings test code
+    //
+    settingsdiv = document.getElementById('settings');
+    // Clear settings pane
+    while(settingsdiv.firstChild) {
+        settingsdiv.removeChild(settingsdiv.firstChild)
+    }
+    
+    if(settings) {
+        for (var i = 0; i < settings.length; i++) {
+            switch(settings[i].type) {
+                case 'textbox':
+                    settingsdiv.innerHTML += settings[i].label + ':';
+                    settingsdiv.appendChild(document.createElement('br'));
+                    break;
+                case 'dropdown':
+                    settingsdiv.innerHTML += settings[i].label + ':';
+                    settingsdiv.appendChild(document.createElement('br'));
+                    var dropdown = document.createElement('select');
+                    dropdown.className = 'notkinetic';
+                    dropdown.setAttribute('onchange', 'functionstuff!!')
+                    dropdown.onchange = function(event){console.log(event.target.value)}
+                    for (var j = 0; j < settings[i].options.length; j++) {
+                        var option = document.createElement('option');
+                        option.innerHTML = settings[i].options[j];
+                        option.value = settings[i].options[j];
+                        dropdown.appendChild(option)
+                        
+                    }
+                    node.settings.push(dropdown.value);
+                    settingsdiv.appendChild(dropdown);
+                    break;
+                case 'radio':
+                    settingsdiv.innerHTML += settings[i].label + ':';
+                    settingsdiv.appendChild(document.createElement('br'));
+                    node.settings.push(settings[i].options[0]);
+                    for (var j = 0; j < settings[i].options.length; j++) {
+                        var radio = document.createElement('input');
+                        radio.className = 'notkinetic';
+                        radio.value = settings[i].options[j];
+                        // Check selected option
+                        if (radio.value === node.settings[i]) {
+                            radio.setAttribute('checked', 'true');
+                        }
+                        radio.setAttribute('type', 'radio');
+                        radio.setAttribute('name', settings[i].label);
+                        settingsdiv.appendChild(radio);
+                        settingsdiv.innerHTML += settings[i].options[j];
+                        settingsdiv.appendChild(document.createElement('br'))
+                    }
+                    break;
+            }
+        }
+    }
+    
     return node.id;
 }
 

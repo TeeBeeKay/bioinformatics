@@ -256,6 +256,12 @@ nodes.removenode = function(uid){
     for (var x = 0; x < removedpaths.length; x++) {
         document.getElementById('svgcanvas').removeChild(removedpaths[x])
     }
+    if (uid === global.selectednode) { // Empty settings pane
+        settingsdiv = document.getElementById('settings');
+        while (settingsdiv.firstChild) {
+            settingsdiv.removeChild(settingsdiv.firstChild);
+        }
+    }
 }
 
 // Called when settings are changed

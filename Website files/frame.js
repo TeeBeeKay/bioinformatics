@@ -9,7 +9,7 @@ $('body').kinetic({
 
 // Import list of nodes
 // http://www.objgen.com/json/models/IfA8
-$.getJSON('nodes.json', function(data) {
+$.getJSON('nodes.json', function (data) {
     nodes.types = data.nodetypes;
     
     for (var i = 0, len = data.nodetypes.length; i < len; i++) {
@@ -139,7 +139,8 @@ nodes.addnode = function(id, x, y) {
     var type = global.lookup[id].name;
     var settings = global.lookup[id].settings;
     var node = {type: type, id: global.uid, inputlinks: [], outputlinks: [], settings: []};
-    node.settings = [];
+    node.settings.values = {};
+    node.settings.settings = settings;
     this.nodes.push(node);
     if (x == undefined) {
         x = global.mousex
@@ -165,14 +166,14 @@ nodes.addnode = function(id, x, y) {
                 case 'textbox':
                     settingsdiv.innerHTML += settings[i].label + ':';
                     settingsdiv.appendChild(document.createElement('br'));
+                    node.settings.values[settings[i].label] = '';
                     break;
                 case 'dropdown':
                     settingsdiv.innerHTML += settings[i].label + ':';
                     settingsdiv.appendChild(document.createElement('br'));
                     var dropdown = document.createElement('select');
                     dropdown.className = 'notkinetic';
-                    dropdown.setAttribute('onchange', 'functionstuff!!')
-                    dropdown.onchange = function(event){console.log(event.target.value)}
+                    dropdown.setAttribute('onchange', 'updatesettingsvalue(event, '+ node.id +', \''+ settings[i].label +'\')')
                     for (var j = 0; j < settings[i].options.length; j++) {
                         var option = document.createElement('option');
                         option.innerHTML = settings[i].options[j];
@@ -180,23 +181,26 @@ nodes.addnode = function(id, x, y) {
                         dropdown.appendChild(option)
                         
                     }
-                    node.settings.push(dropdown.value);
+                    //node.settings.push(dropdown.value);
+                    node.settings.values[settings[i].label] = dropdown.value;
                     settingsdiv.appendChild(dropdown);
                     break;
                 case 'radio':
                     settingsdiv.innerHTML += settings[i].label + ':';
                     settingsdiv.appendChild(document.createElement('br'));
-                    node.settings.push(settings[i].options[0]);
+                    //node.settings.push(settings[i].options[0]);
+                    node.settings.values[settings[i].label] = settings[i].options[0];
                     for (var j = 0; j < settings[i].options.length; j++) {
                         var radio = document.createElement('input');
                         radio.className = 'notkinetic';
                         radio.value = settings[i].options[j];
                         // Check selected option
-                        if (radio.value === node.settings[i]) {
+                        if (radio.value === node.settings.values[settings[i].label]) {
                             radio.setAttribute('checked', 'true');
                         }
                         radio.setAttribute('type', 'radio');
                         radio.setAttribute('name', settings[i].label);
+                        radio.setAttribute('onchange', 'updatesettingsvalue(event, '+ node.id +', \''+ settings[i].label +'\')');
                         settingsdiv.appendChild(radio);
                         settingsdiv.innerHTML += settings[i].options[j];
                         settingsdiv.appendChild(document.createElement('br'))
@@ -252,6 +256,11 @@ nodes.removenode = function(uid){
     for (var x = 0; x < removedpaths.length; x++) {
         document.getElementById('svgcanvas').removeChild(removedpaths[x])
     }
+}
+
+// Called when settings are changed
+function updatesettingsvalue(event, nodeid, property) {
+    nodes.nodes[nodeid].settings.values[property] = event.target.value;
 }
 
 function getElementPosition (element) {

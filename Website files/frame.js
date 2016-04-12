@@ -138,7 +138,7 @@ nodes.types;
 nodes.addnode = function(id, x, y) {
     var type = global.lookup[id].name;
     var settings = global.lookup[id].settings;
-    var node = {type: type, id: global.uid, inputlinks: [], outputlinks: [], settings: [], outputs: []};
+    var node = {type: type, id: global.uid, inputlinks: [], outputlinks: [], settings: [], outputs: [], inputs: []};
     node.settings.values = {};
     node.settings.settings = settings;
     this.nodes.push(node);
@@ -222,7 +222,44 @@ nodes.addnode = function(id, x, y) {
         // Treat sequence node differently
         if (this.type === 'Sequence') {
             this.outputs[0] = {pin: 0, value: this.settings.values['Paste sequence']};
+            
+            // Propagate refresh through child nodes
+            for (var i = 0; i < this.outputlinks.length; i++) {
+                nodes.nodes[this.outputlinks[i].node].refresh();
+            }
         }
+        else {
+            // Create JSON payload with settings and data
+            var payload = {};
+            // Get inputs from upstream nodes
+            payload.inputs = [];
+            for (var i = 0; i < this.inputlinks.length; i++) {
+                pin = this.inputlinks[i].input;
+                value = nodes.nodes[this.inputlinks[i].node].outputs[this.inputlinks[i].output].value;
+                payload.inputs.push({pin: pin, value: value})
+            }
+            // Get settings
+            payload.settings = this.settings.values;
+            
+            // Send payload!
+            console.log(payload);
+            $.ajax({
+                url: 'compute',
+                type: 'POST',
+                data: JSON.stringify(payload),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function(msg) {
+                    alert(msg);
+                }
+            })
+            
+            for (var i = 0; i < this.outputlinks.length; i++) {
+                nodes.nodes[this.outputlinks[i].node].refresh();
+            }
+        }
+        
+            // Propagate refresh through child nodes
     }
     
     return node.id;
@@ -370,8 +407,6 @@ function createtextpane (event) {
     
     document.body.appendChild(background);
     document.body.appendChild(pane);
-    
-    console.log(event.target.value);
 }
 
 function closetextpane () {
@@ -617,9 +652,6 @@ function linkNodes (parent, output, child, input) {
     line = document.createElementNS("http://www.w3.org/2000/svg","path");
     line.setAttributeNS(null, "class", "cable");
     line.setAttributeNS(null, "d", constructLine(parentoutpos[0] + 5, parentoutpos[1] + 5, childoutpos[0] + 5, childoutpos[1] + 5));
-    //line.setAttributeNS(null, "stroke", "blue");
-    //line.setAttributeNS(null, "stroke-width", "2");
-    //line.setAttributeNS(null, "fill", "none");
     line.setAttributeNS(null, "parent", parent + ' ' + output);
     line.setAttributeNS(null, "child", child + ' ' + input);
     document.getElementById("svgcanvas").appendChild(line);

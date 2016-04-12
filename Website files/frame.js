@@ -119,7 +119,7 @@ function setNodePosition (nodeid, x, y) {
     document.getElementById(nodeid).setAttribute('style', 'left: ' + x + 'px; top:' + y + 'px;');
 }
 
-// Set unique node id
+// Set globals
 var global = new Object();
 global.uid = 0;
 global.mousex = 0;
@@ -138,7 +138,7 @@ nodes.types;
 nodes.addnode = function(id, x, y) {
     var type = global.lookup[id].name;
     var settings = global.lookup[id].settings;
-    var node = {type: type, id: global.uid, inputlinks: [], outputlinks: [], settings: []};
+    var node = {type: type, id: global.uid, inputlinks: [], outputlinks: [], settings: [], outputs: []};
     node.settings.values = {};
     node.settings.settings = settings;
     this.nodes.push(node);
@@ -150,6 +150,12 @@ nodes.addnode = function(id, x, y) {
     }
     createNode(id, x, y);
     global.selectednode = node.id;
+    
+    // Create outputs
+    for (var i = 0; i < global.lookup[id].outputs.length; i++) {
+        node.outputs[global.lookup[id].outputs[i].label] = []
+    }
+    
     
     //
     // Fill settings test code
@@ -211,6 +217,14 @@ nodes.addnode = function(id, x, y) {
         }
     }
     
+    // Refresh node
+    node.refresh = function() {
+        // Treat sequence node differently
+        if (this.type === 'Sequence') {
+            this.outputs[0] = {pin: 0, value: this.settings.values['Paste sequence']};
+        }
+    }
+    
     return node.id;
 }
 
@@ -265,9 +279,11 @@ nodes.removenode = function(uid){
     }
 }
 
+
 // Called when settings are changed
 function updatesettingsvalue(event, nodeid, property) {
     nodes.nodes[nodeid].settings.values[property] = event.target.value;
+    nodes.nodes[nodeid].refresh();
 }
 
 function updatetextsettingsvalue(event, nodeid, property) {
@@ -324,7 +340,7 @@ function createtextpane (event) {
     var textbox = document.createElement('textarea');
     textbox.id = 'textpanebox'
     textbox.className = 'notkinetic'
-    textbox.setAttribute('cols', '80');
+    textbox.innerHTML = nodes.nodes[global.selectednode].settings.values[event.target.value];
     
     textbox.style.width = '90%';
     textbox.style.margin = 'auto';
@@ -601,9 +617,9 @@ function linkNodes (parent, output, child, input) {
     line = document.createElementNS("http://www.w3.org/2000/svg","path");
     line.setAttributeNS(null, "class", "cable");
     line.setAttributeNS(null, "d", constructLine(parentoutpos[0] + 5, parentoutpos[1] + 5, childoutpos[0] + 5, childoutpos[1] + 5));
-    line.setAttributeNS(null, "stroke", "blue");
-    line.setAttributeNS(null, "stroke-width", "2");
-    line.setAttributeNS(null, "fill", "none");
+    //line.setAttributeNS(null, "stroke", "blue");
+    //line.setAttributeNS(null, "stroke-width", "2");
+    //line.setAttributeNS(null, "fill", "none");
     line.setAttributeNS(null, "parent", parent + ' ' + output);
     line.setAttributeNS(null, "child", child + ' ' + input);
     document.getElementById("svgcanvas").appendChild(line);

@@ -184,6 +184,7 @@ nodes.addnode = function(id, x, y) {
                     //node.settings.push(dropdown.value);
                     node.settings.values[settings[i].label] = dropdown.value;
                     settingsdiv.appendChild(dropdown);
+                    settingsdiv.appendChild(document.createElement('br'));
                     break;
                 case 'radio':
                     settingsdiv.innerHTML += settings[i].label + ':';
@@ -269,6 +270,101 @@ function updatesettingsvalue(event, nodeid, property) {
     nodes.nodes[nodeid].settings.values[property] = event.target.value;
 }
 
+function updatetextsettingsvalue(event, nodeid, property) {
+    nodes.nodes[nodeid].settings.values[property] = document.getElementById('textpanebox').value;
+    closetextpane();
+    nodes.nodes[nodeid].refresh();
+}
+
+function createtextpane (event) {
+    var background = document.createElement('div');
+    background.id = 'panebackground';
+    background.className = 'notkinetic';
+    
+    background.style.backgroundColor = 'black';
+    background.style.opacity = 0.8;
+    background.style.width = '100%';
+    background.style.height = '100%';
+    background.style.top = '0px';
+    background.style.left = '0px';
+    background.style.zIndex = 2;
+    background.style.position = 'fixed';
+    
+    var pane = document.createElement('div');
+    pane.id = 'textpane';
+    pane.className = 'notkinetic'
+    
+    pane.style.position = 'fixed';
+    pane.style.margin = 'auto';
+    pane.style.width = '80%';
+    pane.style.height = '80%';
+    pane.style.top = '10vh';
+    pane.style.left = '10vw';
+    pane.style.backgroundColor = 'grey';
+    pane.style.zIndex = 2;
+    
+    var header = document.createElement('div');
+    header.id = 'textpaneheader';
+    header.className = 'notkinetic';
+    header.style.textAlign = 'right';
+    
+    var closebutton = document.createElement('button');
+    closebutton.id = 'textpaneclose';
+    closebutton.className = 'notkinetic';
+    closebutton.innerHTML = 'X';
+    closebutton.onclick = closetextpane;
+        
+    var textboxdiv = document.createElement('div');
+    textboxdiv.id = 'textboxdiv';
+    textboxdiv.className = 'notkinetic';
+    
+    textboxdiv.style.textAlign = 'center';
+    textboxdiv.style.height = 'calc(80vh - 50px)';
+    
+    var textbox = document.createElement('textarea');
+    textbox.id = 'textpanebox'
+    textbox.className = 'notkinetic'
+    textbox.setAttribute('cols', '80');
+    
+    textbox.style.width = '90%';
+    textbox.style.margin = 'auto';
+    textbox.style.height = 'calc(100% - 10px)';
+    
+    var footer = document.createElement('div');
+    footer.id = 'textpanefooter';
+    footer.className = 'notkinetic';
+    
+    footer.style.textAlign = 'right';
+    footer.style.paddingRight = '5px';
+    
+    var submitbutton = document.createElement('button');
+    submitbutton.innerHTML = 'Submit';
+    submitbutton.setAttribute('target', event.target.value);
+    submitbutton.setAttribute('onclick', 'updatetextsettingsvalue(event, '+ global.selectednode +', \''+ event.target.value +'\')');
+    
+    // Append elements to document
+    header.appendChild(closebutton);
+    pane.appendChild(header);
+    
+    textboxdiv.appendChild(textbox);
+    pane.appendChild(textboxdiv);
+    
+    footer.appendChild(submitbutton);
+    pane.appendChild(footer);
+    
+    document.body.appendChild(background);
+    document.body.appendChild(pane);
+    
+    console.log(event.target.value);
+}
+
+function closetextpane () {
+    var bg = document.getElementById('panebackground');
+    var pane = document.getElementById('textpane');
+    document.body.removeChild(bg);
+    document.body.removeChild(pane);
+}
+
 function selectnode(event) {
     // Clear settings pane
     var settingsdiv = document.getElementById('settings');
@@ -285,9 +381,16 @@ function selectnode(event) {
             for (var i = 0; i < node.settings.settings.length; i++) {
                 switch(node.settings.settings[i].type) {
                     case 'textbox':
-                        settingsdiv.innerHTML += node.settings.settings[i].label + ':';
+                        settingsdiv.innerHTML += node.settings.settings[i].label + ': ';
+                        
+                        var textbutton = document.createElement('button');
+                        textbutton.innerHTML = 'Input';
+                        textbutton.className = 'notkinetic';
+                        textbutton.value = node.settings.settings[i].label;
+                        textbutton.onclick = createtextpane;
+                        
+                        settingsdiv.appendChild(textbutton);
                         settingsdiv.appendChild(document.createElement('br'));
-                        node.settings.values[node.settings.settings[i].label] = '';
                         break;
                     case 'dropdown':
                         settingsdiv.innerHTML += node.settings.settings[i].label + ':';
@@ -306,6 +409,7 @@ function selectnode(event) {
 
                         }
                         settingsdiv.appendChild(dropdown);
+                        settingsdiv.appendChild(document.createElement('br'));
                         break;
                     case 'radio':
                         settingsdiv.innerHTML += node.settings.settings[i].label + ':';

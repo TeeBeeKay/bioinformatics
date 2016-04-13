@@ -230,7 +230,7 @@ nodes.addnode = function(id, x, y) {
         }
         else {
             // Create JSON payload with settings and data
-            var payload = {};
+            var payload = {type: this.type};
             // Get inputs from upstream nodes
             payload.inputs = [];
             for (var i = 0; i < this.inputlinks.length; i++) {

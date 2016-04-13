@@ -9,7 +9,7 @@ $('body').kinetic({
 
 // Import list of nodes
 // http://www.objgen.com/json/models/IfA8
-$.getJSON('nodes.json', function (data) {
+$.getJSON('static/nodes.json', function (data) {
     nodes.types = data.nodetypes;
     
     for (var i = 0, len = data.nodetypes.length; i < len; i++) {

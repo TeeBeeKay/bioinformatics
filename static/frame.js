@@ -250,7 +250,7 @@ nodes.addnode = function(id, x, y) {
                 contentType: 'application/json; charset=utf-8',
                 dataType: 'json',
                 success: function(msg) {
-                    alert(msg);
+                    console.log(msg);
                 }
             })
             

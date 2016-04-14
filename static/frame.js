@@ -244,7 +244,7 @@ nodes.addnode = function(id, x, y) {
             // Send payload!
             console.log(payload);
             $.ajax({
-                url: 'compute',
+                url: 'compute/',
                 type: 'POST',
                 data: JSON.stringify(payload),
                 contentType: 'application/json; charset=utf-8',

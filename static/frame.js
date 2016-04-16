@@ -251,6 +251,7 @@ nodes.addnode = function(id, x, y) {
                 dataType: 'json',
                 success: function(msg) {
                     console.log(msg);
+                    console.log(this);
                     this.outputs = msg;
                 }
             })

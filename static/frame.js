@@ -230,7 +230,7 @@ nodes.addnode = function(id, x, y) {
         }
         else {
             // Create JSON payload with settings and data
-            var payload = {type: this.type};
+            var payload = {type: this.type, node: this.id};
             // Get inputs from upstream nodes
             payload.inputs = [];
             for (var i = 0; i < this.inputlinks.length; i++) {
@@ -251,8 +251,7 @@ nodes.addnode = function(id, x, y) {
                 dataType: 'json',
                 success: function(msg) {
                     console.log(msg);
-                    console.log(this);
-                    this.outputs = msg;
+                    nodes.nodes[msg.node].outputs = msg;
                 }
             })
             

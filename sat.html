@@ -49,12 +49,13 @@
     </head>
     <body>
         <h1>Sequence Analysis Toolkit</h1>
-        The Sequence Analysis Toolkit is a tool designed for biochemists to make sequence analysis quick and easy
+        The Sequence Analysis Toolkit is a tool designed for biochemists to make sequence analysis quick and easy.
         <img src="static/sat%20screenshot.png" onclick="enlargeImage(event)">
         <h2>Current state</h2>
-        The Sequence Analysis Toolkit is currently under active development. The front end is mostly complete and the flask back end can be extended quickly to add new functions. The backend currently supports Blast protein searches only.
+        The Sequence Analysis Toolkit is currently under active development. The front end is mostly complete and the back end, powered by the flask web framework for python, can now be extended to add new functions. The backend will be built with open source python modules such as Biopython and PyCogent. The backend currently supports Blast protein searches only, but will in future support a range of sequence analysis tools including database searches and simple sequence processing techniques. Several bugfixes are needed on the frontend and I will implement a data visualiser to analyse data obtained and produce high quality figures. Where available I will use BioJS components to speed up development of the visualiser and when not available I will implement my own which I might contribute to the BioJS project.
         <h2>Intentions</h2>
-        The Sequence Analysis Toolkit will in future be available on the web and as a standalone desktop app with access to a python shell allowing both the speed and ease of the visual interface and the power of python. Cloud storage for sequences and workflows will allow work to be synced between the desktop app and the web app allowing sequence analysis to be performed on any computer with a browser and internet connection and continued on a machine with python.
-        <h2>Images</h2>
+        The Sequence Analysis Toolkit will in future be available on the web and as a standalone desktop app with access to a python shell allowing both the speed and ease of the visual interface and the power of python. Cloud storage for sequences and workflows will allow work to be synced between the desktop app and the web app allowing sequence analysis to be performed on any computer with a browser and internet connection and continued on a machine with python when more control is needed. Database searches will be cached to help in instances where a large volume of identical searches is performed such as during a bioinformatics class.
+        <h2>Try it!</h2>
+        The Sequence Analysis Toolkit can be tried in it's current state at <a href="/">www.tomkirk.me</a>. The code may be made available on Github at a later date.
     </body>
 </html>

@@ -3,12 +3,58 @@
     <head>
         <meta charset="UTF-8">
         <title>Sequence Analysis Toolkit</title>
-        <link rel="stylesheet" href="sat.css" type="text/css">
+        <link rel="stylesheet" href="static/sat.css" type="text/css">
+        <script>
+        function enlargeImage(event) {
+            image = event.target;
+            
+            bg = document.createElement('div');
+            bg.id = 'bg';
+            
+            bg.style.position = 'fixed';
+            bg.style.backgroundColor = 'black';
+            bg.style.opacity = 0.8;
+            bg.style.width = '100%';
+            bg.style.height = '100%';
+            bg.style.top = '0px';
+            bg.style.left = '0px';
+            
+            bg.onclick = closeImage;
+            
+            largeimage = image.cloneNode();
+            largeimage.id = 'largeimage';
+            largeimage.style.position = 'fixed';
+            largeimage.style.width = 'auto';
+            largeimage.style.maxWidth = '100%';
+            largeimage.style.margin = 'auto';
+            largeimage.style.top = '15%';
+            largeimage.style.left = '5%';
+            
+            console.log(largeimage.style.width)
+            
+            
+            largeimage.onclick = closeImage;
+            
+            document.body.appendChild(bg);
+            document.body.appendChild(largeimage);
+        }
+        
+        function closeImage(event) {
+            bg = document.getElementById('bg');
+            largeimage = document.getElementById('largeimage');
+            document.body.removeChild(bg);
+            document.body.removeChild(largeimage);
+        }
+        </script>
     </head>
     <body>
         <h1>Sequence Analysis Toolkit</h1>
-        <h2>Intentions</h2>
+        The Sequence Analysis Toolkit is a tool designed for biochemists to make sequence analysis quick and easy
+        <img src="static/sat%20screenshot.png" onclick="enlargeImage(event)">
         <h2>Current state</h2>
+        The Sequence Analysis Toolkit is currently under active development. The front end is mostly complete and the flask back end can be extended quickly to add new functions. The backend currently supports Blast protein searches only.
+        <h2>Intentions</h2>
+        The Sequence Analysis Toolkit will in future be available on the web and as a standalone desktop app with access to a python shell allowing both the speed and ease of the visual interface and the power of python. Cloud storage for sequences and workflows will allow work to be synced between the desktop app and the web app allowing sequence analysis to be performed on any computer with a browser and internet connection and continued on a machine with python.
         <h2>Images</h2>
     </body>
 </html>

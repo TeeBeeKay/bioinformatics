@@ -138,8 +138,8 @@
           "label": "Enzyme",
           "type": "radio",
           "options": [
-            "EcoR1",
-            "BamH1"
+            "EcoRI",
+            "BamHI"
           ]
         }
       ]

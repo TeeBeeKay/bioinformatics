@@ -1,0 +1,15 @@
+body {
+    line-height: 1.6;
+    font-size: 18px;
+    background-color: #E3F2FD;
+    color: #212121
+}
+
+#text {
+    margin: 40px auto;
+    max-width: 800px;
+}
+
+img {
+    max-width: 100%;
+}

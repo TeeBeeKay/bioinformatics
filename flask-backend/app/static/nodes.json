@@ -1,0 +1,223 @@
+{
+  "nodetypes": [
+    {
+      "id": 0,
+      "name": "Sequence",
+      "description": "Input a biological sequence with this node",
+      "tags": "sequence fasta file input DNA protein",
+      "inputs": [
+        {
+          "label": "Input sequence",
+          "type": "sequence",
+          "initial": 1,
+          "max": -1
+        }
+      ],
+      "outputs": [
+        {
+          "label": "Sequence",
+          "type": "sequence",
+          "initial": 1,
+          "max": -1
+        }
+      ],
+      "settings": [
+        {
+          "label": "Paste sequence",
+          "type": "textbox"
+        },
+        {
+          "label": "Upload fasta file",
+          "type": "fileupload"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "Blast",
+      "description": "Search a database for similar protein or DNA sequences with BLAST",
+      "tags": "search blast database",
+      "inputs": [
+        {
+          "label": "Input sequences",
+          "type": "sequence",
+          "initial": 1,
+          "max": -1
+        }
+      ],
+      "outputs": [
+        {
+          "label": "Blast data",
+          "type": "blastdata",
+          "initial": 1,
+          "max": 1
+        },
+        {
+          "label": "Top sequences",
+          "type": "sequence",
+          "initial": 1,
+          "max": -1
+        }
+      ],
+      "settings": [
+        {
+          "label": "Blast program",
+          "type": "radio",
+          "options": [
+            "blastn",
+            "blastp",
+            "blastx",
+            "tblastn",
+            "tblastx"
+          ]
+        },
+        {
+          "label": "Database",
+          "type": "dropdown",
+          "options": [
+            "swissprot"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Protein digest",
+      "description": "Digest a protein sequence into peptides using common enzymes",
+      "tags": "protein digest peptides",
+      "inputs": [
+        {
+          "label": "Protein sequence",
+          "type": "protein sequence",
+          "initial": 1,
+          "max": -1
+        }
+      ],
+      "outputs": [
+        {
+          "label": "Peptides",
+          "type": "protein sequence",
+          "initial": 1,
+          "max": -1
+        }
+      ],
+      "settings": [
+        {
+          "label": "Enzyme",
+          "type": "radio",
+          "options": [
+            "Trypsin",
+            "Chymotrypsin"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "DNA digest",
+      "description": "Digest a DNA sequence using restriction enzymes",
+      "tags": "DNA digest restriction enzymes EcoR1 BamH1",
+      "inputs": [
+        {
+          "label": "DNA sequence",
+          "type": "DNA sequence",
+          "initial": 1,
+          "max": -1
+        }
+      ],
+      "outputs": [
+        {
+          "label": "DNA sequences",
+          "type": "DNA sequence",
+          "initial": 1,
+          "max": -1
+        }
+      ],
+      "settings": [
+        {
+          "label": "Enzyme",
+          "type": "radio",
+          "options": [
+            "EcoRI",
+            "BamHI"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Protein mass",
+      "description": "Evaluate the expected mass of a protein sequence",
+      "tags": "mass kDa molecular weight",
+      "inputs": [
+        {
+          "label": "Protein sequence",
+          "type": "protein sequence",
+          "initial": 1,
+          "max": -1
+        }
+      ],
+      "outputs": [
+        {
+          "label": "Mass",
+          "type": "number",
+          "initial": 1,
+          "max": -1
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Transcribe/translate",
+      "description": "Transcribe and/or translate a DNA or mRNA sequence",
+      "tags": "DNA transcribe translate mRNA",
+      "inputs": [
+        {
+          "label": "DNA sequence",
+          "type": "DNA sequence",
+          "initial": 1,
+          "max": -1
+        }
+      ],
+      "outputs": [
+        {
+          "label": "Transcribed mRNA sequences",
+          "type": "mRNA sequence",
+          "initial": 1,
+          "max": -1
+        },
+        {
+          "label": "Translated protein sequences",
+          "type": "protein sequence",
+          "initial": 1,
+          "max": -1
+        }
+      ],
+      "settings": [
+        {
+          "label": "Codon table",
+          "type": "dropdown",
+          "options": [
+            "Standard code",
+            "Vertebrate mitochondrial"
+          ]
+        },
+        {
+          "label": "frame",
+          "type": "dropdown",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "-1",
+            "-2",
+            "-3",
+            "Forward",
+            "Reverse",
+            "All"
+          ]
+        }
+      ]
+    }
+  ]
+}

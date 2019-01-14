@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Sequence Analysis Toolkit</title>
+        <link rel="stylesheet" href="static/sat.css" type="text/css">
+        <script>
+        function enlargeImage(event) {
+            image = event.target;
+            
+            bg = document.createElement('div');
+            bg.id = 'bg';
+            
+            bg.style.position = 'fixed';
+            bg.style.backgroundColor = 'black';
+            bg.style.opacity = 0.8;
+            bg.style.width = '100%';
+            bg.style.height = '100%';
+            bg.style.top = '0px';
+            bg.style.left = '0px';
+            
+            bg.onclick = closeImage;
+            
+            imcontainer = document.createElement('div');
+            imcontainer.id = 'imcontainer'
+            imcontainer.onclick = closeImage;
+            imcontainer.style.width = '100%';
+            imcontainer.style.height = '100%';
+            imcontainer.style.top = '10%';
+            imcontainer.style.left = '0';
+            imcontainer.style.position = 'fixed';
+            imcontainer.style.display = 'table-cell';
+            imcontainer.style.textAlign = 'center';
+            
+            
+            
+            largeimage = image.cloneNode();
+            largeimage.id = 'largeimage';
+            largeimage.style.width = 'auto';
+            largeimage.style.maxWidth = '100%';
+            largeimage.style.maxHeight = '100%';
+            largeimage.style.margin = 'auto';
+            
+            
+            
+            largeimage.onclick = closeImage;
+            
+            imcontainer.appendChild(largeimage);
+            
+            document.body.appendChild(bg);
+            document.body.appendChild(imcontainer);
+        }
+        
+        function closeImage(event) {
+            bg = document.getElementById('bg');
+            imcontainer = document.getElementById('imcontainer');
+            document.body.removeChild(bg);
+            document.body.removeChild(imcontainer);
+        }
+        </script>
+    </head>
+    <body>
+        <div id="text">
+            <h1>Sequence Analysis Toolkit</h1>
+            The Sequence Analysis Toolkit is a tool designed for biochemists to make sequence analysis quick and easy. Large amounts of information can be extracted from a biological sequence quickly with the intuitive visual interface.
+            <img src="static/sat%20screenshot.png" onclick="enlargeImage(event)">
+            <p style="font-size:12px;float:right;">(Click to enlarge)</p>
+            <h2>Current state</h2>
+            The Sequence Analysis Toolkit is currently under active development. The front end is mostly complete and the back end, powered by the flask web framework for python, can now be extended to add new functions. The backend will be built with open source python modules such as Biopython and PyCogent. The backend currently supports Blast protein searches only, but will in future support a range of sequence analysis tools including database searches and simple sequence processing techniques. Several bugfixes are needed on the frontend and I will implement a data visualiser to analyse data obtained and produce high quality customisable figures. Where available I will use BioJS components to speed up development of the visualiser and when none are available I will implement my own which I might contribute to the BioJS project.
+            <h2>Intentions</h2>
+            The Sequence Analysis Toolkit will in future be available on the web and as a standalone desktop app with access to a python shell allowing both the speed and ease of the visual interface and the power of python. Cloud storage for sequences and workflows will allow work to be synced between the desktop app and the web app allowing sequence analysis to be performed on any computer with a browser and internet connection and continued on a machine with python when more control is needed. Database searches will be cached to help in instances where a large volume of identical searches is performed such as during a bioinformatics class.
+            <h2>Try it!</h2>
+            The Sequence Analysis Toolkit can be tried in it's current state at <a href="/">www.tomkirk.me</a> (currently only supports Chrome on desktop). The code may be made available on Github at a later date.
+        </div>
+    </body>
+</html>
